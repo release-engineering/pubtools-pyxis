@@ -65,7 +65,7 @@ class PyxisKrbAuth(PyxisAuth):
         self.service = service
         self.ktfile = ktfile
         self.ccache_file = ccache_file
-        
+
     def dummy_method(self):
         """
         Initialize.
