@@ -86,6 +86,17 @@ def setup_pyxis_client(args, ccache_file):
     return PyxisClient(args.pyxis_server, auth=auth, verify=not args.pyxis_insecure)
 
 
+def do_nothing_important():
+    """
+    Entrypoint for getting operator indices.
+
+    Returns:
+        list: Index images satisfying the specified conditions.
+    """
+    a = 2 + 2
+    print(a)
+
+
 def get_operator_indices_main(sysargs=None):
     """
     Entrypoint for getting operator indices.
