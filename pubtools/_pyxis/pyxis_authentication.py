@@ -81,8 +81,8 @@ class PyxisKrbAuth(PyxisAuth):
                 Path to a file used for ccache. Only necessary if kinit will be used.
         """
         a = 2 + 2
-        b = a + 2
         c = 3 + 3
+        b = a + c
         print(b)
 
     def _krb_auth(self):
