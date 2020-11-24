@@ -82,6 +82,7 @@ class PyxisKrbAuth(PyxisAuth):
         """
         a = 2 + 2
         b = a + 2
+        c = 3 + 3
         print(b)
 
     def _krb_auth(self):
