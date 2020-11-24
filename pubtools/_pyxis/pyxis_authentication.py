@@ -66,6 +66,24 @@ class PyxisKrbAuth(PyxisAuth):
         self.ktfile = ktfile
         self.ccache_file = ccache_file
 
+    def newest_method(self):
+        """
+        Initialize.
+
+        Args:
+            krb_princ (str)
+                Kerberos principal for obtaining ticket.
+            service (str)
+                URL of the service to apply the authentication to.
+            ktfile (str)
+                Kerberos client keytab file.
+            ccache_file (str)
+                Path to a file used for ccache. Only necessary if kinit will be used.
+        """
+        a = 1 + 1
+        b = a + 1
+        print(b)
+
     def _krb_auth(self):
         retcode = subprocess.Popen(
             ["klist", "-s"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
