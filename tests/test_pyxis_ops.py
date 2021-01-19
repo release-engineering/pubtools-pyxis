@@ -37,10 +37,10 @@ def test_argument_groups(capsys):
 
     parser = utils.setup_arg_parser(args)
     parser.print_help()
-    captured = capsys.readouterr()
+    out, _ = capsys.readouterr()
 
-    assert "Group 1:" in captured.out
-    assert "Group 2:" in captured.out
+    assert "Group 1:" in out
+    assert "Group 2:" in out
 
 
 @mock.patch("pubtools._pyxis.pyxis_ops.json.dump")
@@ -245,5 +245,5 @@ def test_get_operator_indices(capsys):
         )
         pyxis_ops.get_operator_indices_main(args)
 
-    captured = capsys.readouterr()
-    assert captured.out == expected
+    out, _ = capsys.readouterr()
+    assert out == expected
