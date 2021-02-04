@@ -53,3 +53,22 @@ class PyxisClient(object):
         resp.raise_for_status()
 
         return resp.json()["data"]
+
+    def upload_signatures(self, signatures):
+        """
+        Upload signatures from given JSON string.
+
+        Args:
+            signatures (str)
+                JSON with signatures to upload.  See Pyxis API for details.
+
+        Returns:
+            list: List of uploaded signatures including auto-populated fields.
+        """
+        headers = {
+            "Content-Type": "application/json",
+        }
+        resp = self.pyxis_session.post("signatures", data=signatures, headers=headers)
+        resp.raise_for_status()
+
+        return resp.json()
