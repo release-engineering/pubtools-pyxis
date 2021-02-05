@@ -22,7 +22,7 @@ Setup
 ::
 
   $ pip install -r requirements.txt
-  $ pip install . 
+  $ pip install .
   or
   $ python setup.py install
 
@@ -49,4 +49,14 @@ Usage
   --pyxis-ssl-keyfile /path/to/file.key \
   --ocp-versions-range 4.6
 
+  pubtools-pyxis-upload-signatures \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --signatures '[{"foo": "bar"}]'
 
+  pubtools-pyxis-upload-signatures \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --signatures @signatures.json

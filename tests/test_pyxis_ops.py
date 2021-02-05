@@ -247,3 +247,78 @@ def test_get_operator_indices(capsys):
 
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_upload_signature_json(capsys):
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data = load_data("signatures")
+    response = load_response("post_signatures_ok")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+    expected_out = json.dumps(
+        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post("{}v1/signatures".format(hostname), text=response)
+
+        pyxis_ops.upload_signatures_main(args)
+
+        assert m.last_request.text == data
+
+    out, _ = capsys.readouterr()
+    assert out == expected_out
+
+
+def test_upload_signature_file(capsys):
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data_file_path = "@tests/data/signatures.json"
+    data = load_data("signatures")
+    response = load_response("post_signatures_ok")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data_file_path,
+    ]
+    expected_out = json.dumps(
+        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post("{}v1/signatures".format(hostname), text=response)
+
+        pyxis_ops.upload_signatures_main(args)
+
+        assert m.last_request.text.strip() == data.strip()
+
+    out, _ = capsys.readouterr()
+    assert out == expected_out
+
+
+def load_data(filename):
+    with open("tests/data/{0}.json".format(filename)) as f:
+        return f.read()
+
+
+def load_response(filename):
+    with open("tests/data/responses/{0}.json".format(filename)) as f:
+        return f.read()

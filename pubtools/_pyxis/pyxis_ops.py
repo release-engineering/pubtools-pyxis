@@ -117,9 +117,9 @@ def get_operator_indices_main(sysargs=None):
         return resp
 
 
-def upload_signature_main(sysargs=None):
+def upload_signatures_main(sysargs=None):
     """
-    Entrypoint for uploading a signature.
+    Entrypoint for uploading signatures from JSON or a file.
 
     Returns:
         list: List of uploaded signatures including auto-populated fields.
@@ -137,6 +137,7 @@ def upload_signature_main(sysargs=None):
         resp = pyxis_client.upload_signatures(signatures_json)
 
         json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+
         return resp
 
 
@@ -149,8 +150,8 @@ def _get_string_or_file_contents(value):
     otherwise returns the value as is.
 
     Examples:
-        `--items '{"foo"}'` — plain string, returned as is
-        `--items @items.json` — file path; its contents are returned
+        `--items '{"foo"}'` -- plain string, returned as is
+        `--items @items.json` -- file path; its contents are returned
     """
     assert value
 
