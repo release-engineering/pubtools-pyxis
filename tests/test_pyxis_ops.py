@@ -2,6 +2,7 @@ import json
 
 import mock
 import pytest
+import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_ops, utils
@@ -312,6 +313,75 @@ def test_upload_signature_file(capsys):
 
     out, _ = capsys.readouterr()
     assert out == expected_out
+
+
+def test_upload_signature_error_server(capsys):
+    """Test a server-reported error which persists after a few attempts."""
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post("{}v1/signatures".format(hostname), status_code=402)
+
+        with pytest.raises(requests.exceptions.HTTPError):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == ""
+
+
+def test_upload_signature_error_timeout(capsys):
+    """Test a connection error which persists after a few attempts."""
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{}v1/signatures".format(hostname), exc=requests.exceptions.ConnectTimeout
+        )
+
+        with pytest.raises(requests.exceptions.ConnectTimeout):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == ""
+
+
+@mock.patch("pubtools._pyxis.pyxis_ops.setup_pyxis_client")
+def test_arg_parser_required_missing_arg_signatures(mock_client):
+    missing_server = ["dummy"]
+
+    with pytest.raises(SystemExit) as system_error:
+        pyxis_ops.upload_signatures_main(missing_server)
+
+    assert system_error.type == SystemExit
+    assert system_error.value.code == 2
 
 
 def load_data(filename):
