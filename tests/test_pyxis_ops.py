@@ -247,3 +247,30 @@ def test_get_operator_indices(capsys):
 
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_get_repository_metadata(capsys):
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_id = "123"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-id",
+        repo_id,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get("{0}v1/repositories/id/{1}".format(hostname, repo_id), json=data)
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected

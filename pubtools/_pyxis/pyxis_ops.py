@@ -53,6 +53,13 @@ GET_OPERATORS_INDICES_ARGS[("--organization",)] = {
     "type": str,
 }
 
+GET_REPO_METADATA_ARGS = CMD_ARGS.copy()
+GET_REPO_METADATA_ARGS[("--repo-id",)] = {
+    "help": "ID of the repository",
+    "required": True,
+    "type": str,
+}
+
 
 def setup_pyxis_client(args, ccache_file):
     """
@@ -104,6 +111,27 @@ def get_operator_indices_main(sysargs=None):
         res = pyxis_client.get_operator_indices(
             args.ocp_versions_range, args.organization
         )
+
+        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return res
+
+
+def get_repo_metadata_main(sysargs=None):
+    """
+    Entrypoint for getting repository metadata.
+
+    Returns:
+        dict: Metadata of the repository.
+    """
+    parser = setup_arg_parser(GET_REPO_METADATA_ARGS)
+    if sysargs:
+        args = parser.parse_args(sysargs[1:])
+    else:
+        args = parser.parse_args()  # pragma: no cover"
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pyxis_client = setup_pyxis_client(args, tmpfile.name)
+        res = pyxis_client.get_repository_metadata(args.repo_id)
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res

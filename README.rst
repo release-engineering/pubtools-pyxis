@@ -15,6 +15,7 @@ Features
 ========
 
 pubtools-pyxis-get-operator-indices - get a list of index images satisfying the specified conditions
+pubtools-pyxis-get-repo-metadata - get metadata of a Comet repo
 
 Setup
 =====
@@ -29,6 +30,7 @@ Setup
 Usage
 =====
 
+Get operator indices:
 ::
 
   pubtools-pyxis-get-operator-indices \
@@ -49,4 +51,11 @@ Usage
   --pyxis-ssl-keyfile /path/to/file.key \
   --ocp-versions-range 4.6
 
+Get repository metadata:
+::
 
+  pubtools-pyxis-get-repo-metadata \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --repo-id 123

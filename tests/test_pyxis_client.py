@@ -43,3 +43,15 @@ def test_get_operator_indices():
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         res = my_client.get_operator_indices(ver, org)
         assert res == data
+
+
+def test_get_repository_metadata():
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_id = "123"
+    with requests_mock.Mocker() as m:
+        m.get("{0}v1/repositories/id/{1}".format(hostname, repo_id), json=data)
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        res = my_client.get_repository_metadata(repo_id)
+        assert res == data

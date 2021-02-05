@@ -53,3 +53,17 @@ class PyxisClient(object):
         resp.raise_for_status()
 
         return resp.json()["data"]
+
+    def get_repository_metadata(self, repo_id):
+        """Get metadata of a Comet repository.
+
+        Args:
+            repo_id (str):
+                ID of the repository.
+        Returns (dict):
+            Metadata of the repository.
+        """
+        resp = self.pyxis_session.get("repositories/id/{0}".format(repo_id))
+        resp.raise_for_status()
+
+        return resp.json()
