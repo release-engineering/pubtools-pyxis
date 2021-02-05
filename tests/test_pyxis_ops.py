@@ -272,7 +272,7 @@ def test_upload_signature_json(capsys):
     )
 
     with requests_mock.Mocker() as m:
-        m.post("{}v1/signatures".format(hostname), text=response)
+        m.post("{0}v1/signatures".format(hostname), text=response)
 
         pyxis_ops.upload_signatures_main(args)
 
@@ -305,7 +305,7 @@ def test_upload_signature_file(capsys):
     )
 
     with requests_mock.Mocker() as m:
-        m.post("{}v1/signatures".format(hostname), text=response)
+        m.post("{0}v1/signatures".format(hostname), text=response)
 
         pyxis_ops.upload_signatures_main(args)
 
@@ -334,7 +334,7 @@ def test_upload_signature_error_server(capsys):
     ]
 
     with requests_mock.Mocker() as m:
-        m.post("{}v1/signatures".format(hostname), status_code=402)
+        m.post("{0}v1/signatures".format(hostname), status_code=402)
 
         with pytest.raises(requests.exceptions.HTTPError):
             pyxis_ops.upload_signatures_main(args)
@@ -363,7 +363,7 @@ def test_upload_signature_error_timeout(capsys):
 
     with requests_mock.Mocker() as m:
         m.post(
-            "{}v1/signatures".format(hostname), exc=requests.exceptions.ConnectTimeout
+            "{0}v1/signatures".format(hostname), exc=requests.exceptions.ConnectTimeout
         )
 
         with pytest.raises(requests.exceptions.ConnectTimeout):
