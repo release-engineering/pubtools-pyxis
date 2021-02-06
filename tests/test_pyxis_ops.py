@@ -339,8 +339,9 @@ def test_upload_signature_error_server(capsys):
         with pytest.raises(requests.exceptions.HTTPError):
             pyxis_ops.upload_signatures_main(args)
 
-    out, _ = capsys.readouterr()
+    out, err = capsys.readouterr()
     assert out == ""
+    assert err == ""
 
 
 def test_upload_signature_error_timeout(capsys):
@@ -369,8 +370,9 @@ def test_upload_signature_error_timeout(capsys):
         with pytest.raises(requests.exceptions.ConnectTimeout):
             pyxis_ops.upload_signatures_main(args)
 
-    out, _ = capsys.readouterr()
+    out, err = capsys.readouterr()
     assert out == ""
+    assert err == ""
 
 
 @mock.patch("pubtools._pyxis.pyxis_ops.setup_pyxis_client")
