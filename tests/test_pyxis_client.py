@@ -48,10 +48,82 @@ def test_get_operator_indices():
 def test_get_repository_metadata():
     hostname = "https://pyxis.engineering.redhat.com/"
     data = {"metadata": "value", "metadata2": "value2"}
-    repo_id = "123"
+    repo_name = "some-repo/name"
+    registry = "registry.access.redhat.com"
+
     with requests_mock.Mocker() as m:
-        m.get("{0}v1/repositories/id/{1}".format(hostname, repo_id), json=data)
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
-        res = my_client.get_repository_metadata(repo_id)
+        res = my_client.get_repository_metadata(repo_name)
+        assert res == data
+
+
+def test_get_repository_metadata_partner_registry():
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    internal_registry = "registry.access.redhat.com"
+    partner_registry = "registry.connect.redhat.com"
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, internal_registry, repo_name
+            ),
+            text="no data",
+            status_code=404,
+        )
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, partner_registry, repo_name
+            ),
+            json=data,
+        )
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        res = my_client.get_repository_metadata(repo_name)
+        assert res == data
+
+
+def test_get_repository_metadata_only_internal():
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "registry.access.redhat.com"
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        res = my_client.get_repository_metadata(repo_name, only_internal=True)
+        assert res == data
+
+
+def test_get_repository_metadata_only_partner():
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "registry.connect.redhat.com"
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        res = my_client.get_repository_metadata(repo_name, only_partner=True)
         assert res == data

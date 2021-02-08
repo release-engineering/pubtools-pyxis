@@ -54,16 +54,38 @@ class PyxisClient(object):
 
         return resp.json()["data"]
 
-    def get_repository_metadata(self, repo_id):
+    def get_repository_metadata(
+        self, repo_name, only_internal=False, only_partner=False
+    ):
         """Get metadata of a Comet repository.
 
+        If checking only one registry hasn't been specified, check both with precedence on
+        the internal registry.
+
         Args:
-            repo_id (str):
-                ID of the repository.
+            repo_name (str):
+                Name of the repository.
+            only_internal (bool):
+                Whether to only check internal registry.
+            only_partner (bool):
+                Whether to only check partner registry.
         Returns (dict):
             Metadata of the repository.
         """
-        resp = self.pyxis_session.get("repositories/id/{0}".format(repo_id))
-        resp.raise_for_status()
+        internal_registry = "registry.access.redhat.com"
+        partner_registry = "registry.connect.redhat.com"
+        endpoint = "repositories/registry/{0}/repository/{1}"
+        if only_internal:
+            resp = self.pyxis_session.get(endpoint.format(internal_registry, repo_name))
+        elif only_partner:
+            resp = self.pyxis_session.get(endpoint.format(partner_registry, repo_name))
+        else:
+            resp = self.pyxis_session.get(endpoint.format(internal_registry, repo_name))
+            # if 'not found' error, try another registry
+            if resp.status_code == 404:
+                resp = self.pyxis_session.get(
+                    endpoint.format(partner_registry, repo_name)
+                )
 
+        resp.raise_for_status()
         return resp.json()

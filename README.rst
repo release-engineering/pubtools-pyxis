@@ -58,4 +58,18 @@ Get repository metadata:
   --pyxis-server https://pyxis.engineering.redhat.com/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
-  --repo-id 123
+  --repo-name some-repo/name
+
+  pubtools-pyxis-get-repo-metadata \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --repo-name some-repo/name \
+  --only-internal-registry
+
+  pubtools-pyxis-get-repo-metadata \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --repo-name some-repo/name \
+  --only-partner-registry
