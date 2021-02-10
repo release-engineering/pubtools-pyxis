@@ -1,3 +1,5 @@
+from requests.exceptions import HTTPError
+
 from .pyxis_session import PyxisSession
 
 
@@ -69,6 +71,32 @@ class PyxisClient(object):
             "Content-Type": "application/json",
         }
         resp = self.pyxis_session.post("signatures", data=signatures, headers=headers)
-        resp.raise_for_status()
 
-        return resp.json()
+        return self._parse_response(resp)
+
+    def _parse_response(self, response):
+        """
+        Get JSON from given response or raise an informative exception.
+
+        Uses `requests.raise_for_status()` but tries to extract more details.
+        """
+        # the response may contain useful JSON even in case of 40x/50x
+        # but it can't be guaranteed
+        try:
+            data = response.json()
+        except ValueError:  # Python 2.x compat
+            data = {}
+
+        try:
+            response.raise_for_status()
+        except HTTPError as e:
+            # We've got an error, but by default the exception contains only
+            # minimal information: status code (400) and reason (Client error).
+            # If the JSON could be parsed earlier, it may contain important
+            # details (e.g. "Maximum of 100 signatures are allowed").
+            extra_msg = data["detail"] if "detail" in data else response.text
+
+            # re-raise the exception with an extra message
+            raise HTTPError("{0}\n{1}".format(e, extra_msg))
+
+        return data

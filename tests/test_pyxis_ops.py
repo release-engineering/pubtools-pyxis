@@ -386,6 +386,87 @@ def test_arg_parser_required_missing_arg_signatures(mock_client):
     assert system_error.value.code == 2
 
 
+def test_upload_signatures_server_error_json_detail(capsys):
+    """
+    Test error response with additional details as JSON.
+
+    Verify that in case of an erroneus response from the server not only the
+    status code (e.g. 400) and reason (e.g. "Client Error") are displayed, but
+    also the response content, because it may contain crucial information.
+    """
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{0}v1/signatures".format(hostname),
+            status_code=400,
+            reason="Crunchy frog",
+            text='{"detail": "Extremely nasty"}',
+        )
+
+        err_msg = "400 Client Error: Crunchy frog for url: .+\nExtremely nasty"
+        with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
+def test_upload_signatures_server_error_content(capsys):
+    """
+    Test error response with additional details as non-JSON content.
+
+    Verify that in case of an error the extra details from the response are
+    shown even if we failed to parse the content as JSON.
+    """
+    hostname = "https://pyxis.engineering.redhat.com/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{0}v1/signatures".format(hostname),
+            status_code=400,
+            reason="Crunchy frog",
+            text="Extra non-JSON info",
+        )
+
+        err_msg = "400 Client Error: Crunchy frog for url: .+\nExtra non-JSON info"
+        with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
 def load_data(filename):
     with open("tests/data/{0}.json".format(filename)) as f:
         return f.read()
