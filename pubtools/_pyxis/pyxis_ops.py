@@ -55,8 +55,8 @@ GET_OPERATORS_INDICES_ARGS[("--organization",)] = {
 
 UPLOAD_SIGNATURES_ARGS = CMD_ARGS.copy()
 UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
-    "help": "Signatures in JSON format or an @-prefixed file path with JSON, "
-    "e.g. --signatures=@/tmp/filename.json",
+    "help": "Signatures in JSON format (as a string) or an @-prefixed file path"
+    " with JSON, e.g. --signatures=@/tmp/filename.json",
     "required": True,
     "type": str,
 }
@@ -152,6 +152,7 @@ def _get_string_or_file_contents(value):
     Examples:
         `--items '{"foo"}'` -- plain string, returned as is
         `--items @items.json` -- file path; its contents are returned
+        (see README for details)
     """
     assert value
 
