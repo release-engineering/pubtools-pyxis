@@ -92,8 +92,8 @@ class PyxisClient(object):
         except HTTPError as e:
             # We've got an error, but by default the exception contains only
             # minimal information: status code (400) and reason (Client error).
-            # If the JSON could be parsed earlier, it may contain important
-            # details (e.g. "Maximum of 100 signatures are allowed").
+            # If the JSON was successfully parsed earlier, it may contain
+            # important details (e.g. "Maximum of 100 signatures are allowed").
             extra_msg = data["detail"] if "detail" in data else response.text
 
             # re-raise the exception with an extra message
