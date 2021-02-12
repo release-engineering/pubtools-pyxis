@@ -6,7 +6,7 @@ from pubtools._pyxis import pyxis_client, pyxis_authentication
 
 @mock.patch("pubtools._pyxis.pyxis_client.PyxisSession")
 def test_client_init(mock_session):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
 
     pyxis_client.PyxisClient(hostname, 5, None, 3, True)
     mock_session.assert_called_once_with(
@@ -15,7 +15,7 @@ def test_client_init(mock_session):
 
 
 def test_client_init_set_auth():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     crt_path = "/root/name.crt"
     key_path = "/root/name.key"
     auth = pyxis_authentication.PyxisSSLAuth(crt_path, key_path)
@@ -25,7 +25,7 @@ def test_client_init_set_auth():
 
 
 def test_get_operator_indices():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = [
         {"path": "registry.io/index-image:4.5", "other": "stuff"},
         {"path": "registry.io/index-image:4.6", "other2": "stuff2"},
@@ -46,7 +46,7 @@ def test_get_operator_indices():
 
 
 def test_get_repository_metadata():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -65,7 +65,7 @@ def test_get_repository_metadata():
 
 
 def test_get_repository_metadata_partner_registry():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     internal_registry = "registry.access.redhat.com"
@@ -92,7 +92,7 @@ def test_get_repository_metadata_partner_registry():
 
 
 def test_get_repository_metadata_only_internal():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -111,7 +111,7 @@ def test_get_repository_metadata_only_internal():
 
 
 def test_get_repository_metadata_only_partner():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.connect.redhat.com"
