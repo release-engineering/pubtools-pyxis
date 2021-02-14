@@ -153,8 +153,6 @@ def _get_string_or_file_contents(value):
         `{"foo"}` -- plain string, returned as is
         `@items.json` -- file path; its contents are returned
     """
-    assert value
-
     if not value.startswith("@"):
         return value
 
