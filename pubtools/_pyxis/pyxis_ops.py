@@ -150,9 +150,8 @@ def _get_string_or_file_contents(value):
     otherwise returns the value as is.
 
     Examples:
-        `--items '{"foo"}'` -- plain string, returned as is
-        `--items @items.json` -- file path; its contents are returned
-        (see README for details)
+        `{"foo"}` -- plain string, returned as is
+        `@items.json` -- file path; its contents are returned
     """
     assert value
 
