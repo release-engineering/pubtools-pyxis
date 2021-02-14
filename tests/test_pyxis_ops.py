@@ -50,7 +50,7 @@ def test_arg_parser_required(mock_client, mock_json):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
     ]
@@ -58,7 +58,7 @@ def test_arg_parser_required(mock_client, mock_json):
     called_args, _ = mock_client.call_args
 
     assert called_args[0].ocp_versions_range == "4.5"
-    assert called_args[0].pyxis_server == "https://pyxis.engineering.redhat.com/"
+    assert called_args[0].pyxis_server == "https://pyxis.remote.host/"
     assert called_args[0].organization is None
     assert called_args[0].pyxis_insecure is None
     assert called_args[0].pyxis_krb_ktfile is None
@@ -83,7 +83,7 @@ def test_arg_parser_required_missing_ocp_versions(mock_client):
     missing_ocp_versions = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
     ]
 
     with pytest.raises(SystemExit) as system_error:
@@ -101,7 +101,7 @@ def test_arg_parser_krb_verification(mock_kerberos, mock_ssl, mock_client, mock_
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-krb-principal",
@@ -121,7 +121,7 @@ def test_arg_parser_ssl_verification(mock_kerberos, mock_ssl, mock_client, mock_
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -145,7 +145,7 @@ def test_arg_parser_both_verifications_krb_used(
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -168,7 +168,7 @@ def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
     ]
@@ -187,7 +187,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -200,7 +200,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     bad_args2 = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis.remote.host/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-keyfile",
@@ -215,7 +215,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
 
 
 def test_get_operator_indices(capsys):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
     images = ["registry.io/index-image:4.5", "registry.io/index-image:4.6"]
     data = [{"path": image, "something": "else"} for image in images]
     ver = "4.5-4.6"
@@ -251,7 +251,7 @@ def test_get_operator_indices(capsys):
 
 
 def test_upload_signature_json(capsys):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data = load_data("signatures")
     response = load_response("post_signatures_ok")
@@ -283,7 +283,7 @@ def test_upload_signature_json(capsys):
 
 
 def test_upload_signature_file(capsys):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data_file_path = "@tests/data/signatures.json"
     data = load_data("signatures")
@@ -317,7 +317,7 @@ def test_upload_signature_file(capsys):
 
 def test_upload_signature_error_server(capsys):
     """Test a server-reported error which persists after a few attempts."""
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data = load_data("signatures")
 
@@ -346,7 +346,7 @@ def test_upload_signature_error_server(capsys):
 
 def test_upload_signature_error_timeout(capsys):
     """Test a connection error which persists after a few attempts."""
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data = load_data("signatures")
 
@@ -394,7 +394,7 @@ def test_upload_signatures_server_error_json_detail(capsys):
     status code (e.g. 400) and reason (e.g. "Client Error") are displayed, but
     also the response content, because it may contain crucial information.
     """
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data = load_data("signatures")
 
@@ -434,7 +434,7 @@ def test_upload_signatures_server_error_content(capsys):
     Verify that in case of an error the extra details from the response are
     shown even if we failed to parse the content as JSON.
     """
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis.remote.host/"
 
     data = load_data("signatures")
 
