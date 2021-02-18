@@ -49,7 +49,7 @@ def test_arg_parser_required(mock_client, mock_json):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
     ]
@@ -57,7 +57,7 @@ def test_arg_parser_required(mock_client, mock_json):
     called_args, _ = mock_client.call_args
 
     assert called_args[0].ocp_versions_range == "4.5"
-    assert called_args[0].pyxis_server == "https://pyxis.engineering.redhat.com/"
+    assert called_args[0].pyxis_server == "https://pyxis-prod-url/"
     assert called_args[0].organization is None
     assert called_args[0].pyxis_insecure is None
     assert called_args[0].pyxis_krb_ktfile is None
@@ -82,7 +82,7 @@ def test_arg_parser_required_missing_ocp_versions(mock_client):
     missing_ocp_versions = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
     ]
 
     with pytest.raises(SystemExit) as system_error:
@@ -100,7 +100,7 @@ def test_arg_parser_krb_verification(mock_kerberos, mock_ssl, mock_client, mock_
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-krb-principal",
@@ -120,7 +120,7 @@ def test_arg_parser_ssl_verification(mock_kerberos, mock_ssl, mock_client, mock_
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -144,7 +144,7 @@ def test_arg_parser_both_verifications_krb_used(
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -167,7 +167,7 @@ def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
     ]
@@ -186,7 +186,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -199,7 +199,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     bad_args2 = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis.engineering.redhat.com/",
+        "https://pyxis-prod-url/",
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-keyfile",
@@ -214,7 +214,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
 
 
 def test_get_operator_indices(capsys):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     images = ["registry.io/index-image:4.5", "registry.io/index-image:4.6"]
     data = [{"path": image, "something": "else"} for image in images]
     ver = "4.5-4.6"
@@ -244,6 +244,205 @@ def test_get_operator_indices(capsys):
             json={"data": data},
         )
         pyxis_ops.get_operator_indices_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected
+
+
+def test_get_repository_metadata_no_restriction(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "registry.access.redhat.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected
+
+
+def test_get_repository_metadata_both_restrictions_specified(capsys):
+    hostname = "https://pyxis-prod-url/"
+    repo_name = "some-repo/name"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--only-internal-registry",
+        "--only-partner-registry",
+    ]
+
+    with pytest.raises(ValueError, match="Can't check only internal registry.*"):
+        pyxis_ops.get_repo_metadata_main(args)
+
+
+def test_get_repository_metadata_no_restriction_partner_registry(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    internal_registry = "registry.access.redhat.com"
+    partner_registry = "registry.connect.redhat.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, internal_registry, repo_name
+            ),
+            text="no data",
+            status_code=404,
+        )
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, partner_registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected
+
+
+def test_get_repository_metadata_only_internal(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "registry.access.redhat.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--only-internal-registry",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected
+
+
+def test_get_repository_metadata_only_partner(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "registry.connect.redhat.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--only-partner-registry",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected
+
+
+def test_get_repository_metadata_custom_registry(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "some.registry.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--custom-registry",
+        registry,
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
 
     out, _ = capsys.readouterr()
     assert out == expected

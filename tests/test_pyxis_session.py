@@ -5,7 +5,7 @@ from pubtools._pyxis import pyxis_session
 
 @mock.patch("pubtools._pyxis.pyxis_session.requests.Session")
 def test_session_init(mock_session):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     mock_mount = mock.MagicMock()
     mock_session.return_value.mount = mock_mount
 
@@ -15,18 +15,18 @@ def test_session_init(mock_session):
 
 
 def test_api_url():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     my_session = pyxis_session.PyxisSession(hostname)
-    assert my_session._api_url("add") == "https://pyxis.engineering.redhat.com/v1/add"
+    assert my_session._api_url("add") == "https://pyxis-prod-url/v1/add"
 
-    hostname = "pyxis.engineering.redhat.com/"
+    hostname = "pyxis-prod-url/"
     my_session = pyxis_session.PyxisSession(hostname)
-    assert my_session._api_url("rm") == "https://pyxis.engineering.redhat.com/v1/rm"
+    assert my_session._api_url("rm") == "https://pyxis-prod-url/v1/rm"
 
 
 @mock.patch("pubtools._pyxis.pyxis_session.requests.Session")
 def test_rest_methods(mock_session):
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     mock_get = mock.MagicMock()
     mock_post = mock.MagicMock()
     mock_put = mock.MagicMock()
