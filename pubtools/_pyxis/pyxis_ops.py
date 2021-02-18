@@ -53,6 +53,28 @@ GET_OPERATORS_INDICES_ARGS[("--organization",)] = {
     "type": str,
 }
 
+GET_REPO_METADATA_ARGS = CMD_ARGS.copy()
+GET_REPO_METADATA_ARGS[("--repo-name",)] = {
+    "help": "Name of the repository",
+    "required": True,
+    "type": str,
+}
+GET_REPO_METADATA_ARGS[("--custom-registry",)] = {
+    "help": "Custom registry address. Will be used instead of the default addresses.",
+    "required": False,
+    "type": str,
+}
+GET_REPO_METADATA_ARGS[("--only-internal-registry",)] = {
+    "help": "Check only internal registry",
+    "required": False,
+    "type": bool,
+}
+GET_REPO_METADATA_ARGS[("--only-partner-registry",)] = {
+    "help": "Check only partner registry",
+    "required": False,
+    "type": bool,
+}
+
 UPLOAD_SIGNATURES_ARGS = CMD_ARGS.copy()
 UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
     "help": "Signatures in JSON format (as a string) or an @-prefixed file path"
@@ -115,6 +137,38 @@ def get_operator_indices_main(sysargs=None):
 
         json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return resp
+
+
+def get_repo_metadata_main(sysargs=None):
+    """
+    Entrypoint for getting repository metadata.
+
+    Returns:
+        dict: Metadata of the repository.
+    """
+    parser = setup_arg_parser(GET_REPO_METADATA_ARGS)
+
+    if sysargs:
+        args = parser.parse_args(sysargs[1:])
+    else:
+        args = parser.parse_args()  # pragma: no cover"
+
+    if args.only_internal_registry and args.only_partner_registry:
+        raise ValueError(
+            "Can't check only internal registry as well as only partner registry"
+        )
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pyxis_client = setup_pyxis_client(args, tmpfile.name)
+        res = pyxis_client.get_repository_metadata(
+            args.repo_name,
+            args.custom_registry,
+            args.only_internal_registry,
+            args.only_partner_registry,
+        )
+
+        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return res
 
 
 def upload_signatures_main(sysargs=None):

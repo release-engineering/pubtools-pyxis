@@ -13,16 +13,14 @@ def test_ssl_authentication():
     assert ssl_auth.crt_path == crt_path
     assert ssl_auth.key_path == key_path
 
-    my_pyxis_session = pyxis_session.PyxisSession(
-        "https://pyxis.engineering.redhat.com/"
-    )
+    my_pyxis_session = pyxis_session.PyxisSession("https://pyxis-prod-url/")
     ssl_auth.apply_to_session(my_pyxis_session)
     assert my_pyxis_session.session.cert == (crt_path, key_path)
 
 
 def test_krb_auth_init():
     krb_princ = "name@REDHAT.COM"
-    service = "https://pyxis.engineering.redhat.com/"
+    service = "https://pyxis-prod-url/"
     ktfile = "/root/file.keytab"
 
     krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, ktfile)
@@ -35,7 +33,7 @@ def test_krb_auth_init():
 @mock.patch("pubtools._pyxis.pyxis_authentication.subprocess.Popen")
 def test_krb_auth_use_keytab(mock_popen):
     krb_princ = "name@REDHAT.COM"
-    service = "https://pyxis.engineering.redhat.com/"
+    service = "https://pyxis-prod-url/"
     ktfile = "/root/file.keytab"
 
     krb_auth = pyxis_authentication.PyxisKrbAuth(
@@ -70,7 +68,7 @@ def test_krb_auth_use_keytab(mock_popen):
 @mock.patch("pubtools._pyxis.pyxis_authentication.subprocess.Popen")
 def test_krb_auth_use_default_keytab(mock_popen):
     krb_princ = "name@REDHAT.COM"
-    service = "https://pyxis.engineering.redhat.com/"
+    service = "https://pyxis-prod-url/"
 
     krb_auth = pyxis_authentication.PyxisKrbAuth(
         krb_princ, service, ccache_file="/tmp/tempfile"
@@ -96,7 +94,7 @@ def test_krb_auth_use_default_keytab(mock_popen):
 @mock.patch("pubtools._pyxis.pyxis_authentication.subprocess.Popen")
 def test_krb_auth_skip_init(mock_popen):
     krb_princ = "name@REDHAT.COM"
-    service = "https://pyxis.engineering.redhat.com/"
+    service = "https://pyxis-prod-url/"
 
     krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service)
     mock_wait = mock.MagicMock()
@@ -114,12 +112,10 @@ def test_krb_auth_skip_init(mock_popen):
 @mock.patch("pubtools._pyxis.pyxis_authentication.PyxisKrbAuth._krb_auth")
 def test_krb_apply_to_session(mock_krb_auth):
     krb_princ = "name@REDHAT.COM"
-    service = "https://pyxis.engineering.redhat.com/"
+    service = "https://pyxis-prod-url/"
     ktfile = "/root/file.keytab"
 
     krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, ktfile)
-    my_pyxis_session = pyxis_session.PyxisSession(
-        "https://pyxis.engineering.redhat.com/"
-    )
+    my_pyxis_session = pyxis_session.PyxisSession("https://pyxis-prod-url/")
     krb_auth.apply_to_session(my_pyxis_session)
     assert isinstance(my_pyxis_session.session.auth, mock.MagicMock)
