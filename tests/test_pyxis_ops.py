@@ -411,3 +411,38 @@ def test_get_repository_metadata_only_partner(capsys):
 
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_get_repository_metadata_custom_registry(capsys):
+    hostname = "https://pyxis-prod-url/"
+    data = {"metadata": "value", "metadata2": "value2"}
+    repo_name = "some-repo/name"
+    registry = "some.registry.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--custom-registry",
+        registry,
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            json=data,
+        )
+        pyxis_ops.get_repo_metadata_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == expected

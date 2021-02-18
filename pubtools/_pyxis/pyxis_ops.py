@@ -59,6 +59,11 @@ GET_REPO_METADATA_ARGS[("--repo-name",)] = {
     "required": True,
     "type": str,
 }
+GET_REPO_METADATA_ARGS[("--custom-registry",)] = {
+    "help": "Custom registry address. Will be used instead of the default addresses.",
+    "required": False,
+    "type": str,
+}
 GET_REPO_METADATA_ARGS[("--only-internal-registry",)] = {
     "help": "Check only internal registry",
     "required": False,
@@ -147,7 +152,10 @@ def get_repo_metadata_main(sysargs=None):
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
         res = pyxis_client.get_repository_metadata(
-            args.repo_name, args.only_internal_registry, args.only_partner_registry
+            args.repo_name,
+            args.custom_registry,
+            args.only_internal_registry,
+            args.only_partner_registry,
         )
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))

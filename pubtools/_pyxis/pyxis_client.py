@@ -55,7 +55,7 @@ class PyxisClient(object):
         return resp.json()["data"]
 
     def get_repository_metadata(
-        self, repo_name, only_internal=False, only_partner=False
+        self, repo_name, custom_registry=None, only_internal=False, only_partner=False
     ):
         """Get metadata of a Comet repository.
 
@@ -65,6 +65,8 @@ class PyxisClient(object):
         Args:
             repo_name (str):
                 Name of the repository.
+            custom_registry (str):
+                Use a custom registry address instead of the default ones.
             only_internal (bool):
                 Whether to only check internal registry.
             only_partner (bool):
@@ -75,7 +77,9 @@ class PyxisClient(object):
         internal_registry = "registry.access.redhat.com"
         partner_registry = "registry.connect.redhat.com"
         endpoint = "repositories/registry/{0}/repository/{1}"
-        if only_internal:
+        if custom_registry:
+            resp = self.pyxis_session.get(endpoint.format(custom_registry, repo_name))
+        elif only_internal:
             resp = self.pyxis_session.get(endpoint.format(internal_registry, repo_name))
         elif only_partner:
             resp = self.pyxis_session.get(endpoint.format(partner_registry, repo_name))
