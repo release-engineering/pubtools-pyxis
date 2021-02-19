@@ -2,6 +2,7 @@ import json
 
 import mock
 import pytest
+import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_ops, utils
@@ -446,3 +447,230 @@ def test_get_repository_metadata_custom_registry(capsys):
 
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_upload_signature_json(capsys):
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+    response = load_response("post_signatures_ok")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+    expected_out = json.dumps(
+        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post("{0}v1/signatures".format(hostname), text=response)
+
+        pyxis_ops.upload_signatures_main(args)
+
+        assert m.last_request.text == data
+
+    out, _ = capsys.readouterr()
+    assert out == expected_out
+
+
+def test_upload_signature_file(capsys):
+    hostname = "https://pyxis.remote.host/"
+
+    data_file_path = "@tests/data/signatures.json"
+    data = load_data("signatures")
+    response = load_response("post_signatures_ok")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data_file_path,
+    ]
+    expected_out = json.dumps(
+        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.post("{0}v1/signatures".format(hostname), text=response)
+
+        pyxis_ops.upload_signatures_main(args)
+
+        assert m.last_request.text.strip() == data.strip()
+
+    out, _ = capsys.readouterr()
+    assert out == expected_out
+
+
+def test_upload_signature_error_server(capsys):
+    """Test a server-reported error which persists after a few attempts."""
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post("{0}v1/signatures".format(hostname), status_code=402)
+
+        with pytest.raises(requests.exceptions.HTTPError):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
+def test_upload_signature_error_timeout(capsys):
+    """Test a connection error which persists after a few attempts."""
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{0}v1/signatures".format(hostname), exc=requests.exceptions.ConnectTimeout
+        )
+
+        with pytest.raises(requests.exceptions.ConnectTimeout):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
+@mock.patch("pubtools._pyxis.pyxis_ops.setup_pyxis_client")
+def test_arg_parser_required_missing_arg_signatures(mock_client):
+    missing_server = ["dummy"]
+
+    with pytest.raises(SystemExit) as system_error:
+        pyxis_ops.upload_signatures_main(missing_server)
+
+    assert system_error.type == SystemExit
+    assert system_error.value.code == 2
+
+
+def test_upload_signatures_server_error_json_detail(capsys):
+    """
+    Test error response with additional details as JSON.
+
+    Verify that in case of an erroneus response from the server not only the
+    status code (e.g. 400) and reason (e.g. "Client Error") are displayed, but
+    also the response content, because it may contain crucial information.
+    """
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{0}v1/signatures".format(hostname),
+            status_code=400,
+            reason="Crunchy frog",
+            text='{"detail": "Extremely nasty"}',
+        )
+
+        err_msg = "400 Client Error: Crunchy frog for url: .+\nExtremely nasty"
+        with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
+def test_upload_signatures_server_error_content(capsys):
+    """
+    Test error response with additional details as non-JSON content.
+
+    Verify that in case of an error the extra details from the response are
+    shown even if we failed to parse the content as JSON.
+    """
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post(
+            "{0}v1/signatures".format(hostname),
+            status_code=400,
+            reason="Crunchy frog",
+            text="Extra non-JSON info",
+        )
+
+        err_msg = "400 Client Error: Crunchy frog for url: .+\nExtra non-JSON info"
+        with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
+            pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+
+
+def load_data(filename):
+    with open("tests/data/{0}.json".format(filename)) as f:
+        return f.read()
+
+
+def load_response(filename):
+    with open("tests/data/responses/{0}.json".format(filename)) as f:
+        return f.read()

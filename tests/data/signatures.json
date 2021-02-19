@@ -1,0 +1,18 @@
+[
+    {
+        "_id": "57ea8cec9c624c035f95abcd",
+        "manifest_digest": "sha256:1d7aa50dbe54d6b13794a8ced8b7dfa0f7bfc4a29dc24710286c56bba7a771f4",
+        "repository": "redhat-qa/e2e-container---rhel-8-e2e-container-test-product",
+        "reference": "registry.access.qa.redhat.com/e2e-container/rhel-8-e2e-container-test-product:latest",
+        "sig_key_id": "37036783",
+        "signature_data": "owGbwMvMwMG4QC3XyJw5vZlxLaNnklh8UUFucWa6blFqoW6SYaZZerpeUmZe/IX8N9VKyUWZJZnJiTlKVgrVSpm5iempYFZKfnJ2apFubmJeZlpqcYluSmY6kAJKKRVnJBqZmlmZGyQlmRilJKVZJKYkJ1maJ6aYpBgnJVmYJ1tYJiUZpVoYpxikmZuZG5mmmieZGRgaGxmlmKWamFgamJunGZmkKtXqKCiVVBaArFNKLMnPzUxWSM7PK0nMzEstUgC6Ni+xpLQoVQmoKjMlNa8ks6QS2WFFqWmpRal5yWDtULGC0pwC3YySkoIUKwsg0C8Buli/KLUg39DKXM9S19DYTKkWZGt+QUlmfh7Uy8lFqUDbi0DGBKWmKHgkligEOfsqBJQmKRjomZrpGeimZQLVKgC1djKJMrMygIINHrwcYQH8v1lPr/+dOUNuke4m/gDvxbfkgytS5rXbWi6cUebvJ5YitX3nZrdz52McxI/u2iL7yvtiqn7QPYerGg8/+TNPkrv+jMHiPV9fY26ap/ARZWb+j2x8rzYcMjmzyH3KPX2eWQb5d09oRDvdZT112ipib5TUrL8hi2aKrlngtK2u5MXJGSaF+kyeYv9lS6Q5a9dp8l3dO2deb8cpmyCp294tYg09V+LFO64anlph89Np2hne1G2aGVfXy8hEraoN/h9/48t5pv27mHad23Vl1nEPmdpc7pv9EfpOX+4cPjRP1W9dguFkYd7Zll/PLI/cKsXMI8uWwSGjnCi9sPzMkZ89ipf+HV2kqWDg17qwncHIeQfDlOO3D0z8kD5fQTY6YjnnqdaIW2K9D/1nf3a4fjSA63zBrg6djaeMT1oU174K5M36Ne/5GW2eLJ0DZWfztpzjrdBvZ1n2+eyv6wsdl3ybZ5my2yck53Z0sDfTsu6EqGfJDMWumn4c8r+qIm89OxYdfdveI3pB/ge+rc4BJ2Udi44nt3GUltSd6vA73LJ9gYebntI0vW6/L7UrT5y+M/ckg3rFPeYY7RNflrmXnP7ffFQ+Re3YtTm5M5baz7ssqrpJ8NbbG/OEZs2YuqT40pnjW18zC1l++6AU8mLZjcDcXdKzrmyLPN28Mq6o8MCnQ4J7OWfuZt3MtNUphXPZjMrj4eFHG379v/OyNuWM2EMA"
+    },
+    {
+        "_id": "57ea8cec9c624c035f95abcc",
+        "manifest_digest": "sha256:812936ca3061600b2106210528ebe18350354c64592c7936e10a008f9e24748e",
+        "repository": "redhat-qa/ansible-tower-33---ansible-tower",
+        "reference": "registry.access.qa.redhat.com/ansible-tower-33/ansible-tower:latest",
+        "sig_key_id": "FD431D51",
+        "signature_data": "owGbwMvMwMG4QC3XyJw5vZlxLWNyklh8UUFucWa6blFqoa5HkEd5bqFeUmZetMcBvmql5KLMkszkxBwlK4VqpczcxPRUMCslPzk7tUg3NzEvMy21uEQ3JTMdSAGllIozEo1MzawsDI0sjc2SE40NzAzNDAySjAwNzIDY1MgiNSnV0MLY1MDY1CTZzMTU0ijZHKgy1dAg0cDAIs0y1cjE3MQiValWR0GppLIAZJ1SYkl+bmayQnJ+XkliZl5qkQLQtXmJJaVFqUpAVZkpqXklmSWVyA4rSk1LLUrNSwZrL0pNzywuKarUS0xOTi0u1itM1CtKTclILNFLzs/VT8wrzkzKSdUtyS8HajQ2RhWwykksAfmsFuSe/IKSzPw8aGAkF6UC3VUEsiAoNUXBI7FEIcjZVyGgNEnBQM/IVM9ANy0TqFYBqLWTSZSZlQEUoPCA5+A9zv9PnU1BUU25JzossOdofmDjl14307g2Fs2oC2/bdtx6ejTc8NSJeeuc7yX0ierlTjrb2Xji954I87IwsXkL3zHMYpvA+Gl24mrm8IjNjdKNJ/6lp1iJNM8qs3nzLO9B/7z9Cc7aR76cZz86XfvoPR6niDXuvi4ens1KG46oyP/gv6uVzhxl3/pkecHJp6dntoimNxY47A+5/FtlyZOrEi31gdsEDr76tqBL4Wbl5SdnfELndP8wPybHwHvUa6mtuCpzPtMKppJps8vPV3iGOm3R2zHZmfN30URRw4bpT58cmnJ9za+uW15P315h3H9Uh3vdsd/8a3rb6rhyv/kbyllXrI6d2nb32Y7fLundcXPbhdlKLb/ln2ZuiF1ooFg/8bzhz6q3mh4pXk1Xb6jtU7wleHHpc43K6t1Jf182HzbsKZE/oZdhE+TosCVG+51Ykc6VaTdPpE+dXdm9Smq7I/8tlakPHrMwH3669Or+d9svTTLa+kdAJWjDlZ1h9edKrB0lg633/bCPmcWmdTOhXeCbht2/iuJzsRNkRVhUzi9bb8QjeL+Q9XPins/31sdGet75EtG3reiIj8jbNI+awFe3eNXeaEX+mLV9g9uGNw1/nNK01b+21OqrrWldLP3R2bBVxk7kQN6H7QJrC9b3VGqH5B/mFjVZoGmfe0lAKe9pxJP50+bU/dQJFZkebSJd5jHtT/bj/2fUN1vaKwIA"
+    }
+]

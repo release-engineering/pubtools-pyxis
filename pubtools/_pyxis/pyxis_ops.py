@@ -75,6 +75,14 @@ GET_REPO_METADATA_ARGS[("--only-partner-registry",)] = {
     "type": bool,
 }
 
+UPLOAD_SIGNATURES_ARGS = CMD_ARGS.copy()
+UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
+    "help": "Signatures in JSON format (as a string) or an @-prefixed file path"
+    " with JSON, e.g. --signatures=@/tmp/filename.json",
+    "required": True,
+    "type": str,
+}
+
 
 def setup_pyxis_client(args, ccache_file):
     """
@@ -123,12 +131,12 @@ def get_operator_indices_main(sysargs=None):
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
-        res = pyxis_client.get_operator_indices(
+        resp = pyxis_client.get_operator_indices(
             args.ocp_versions_range, args.organization
         )
 
-        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
-        return res
+        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return resp
 
 
 def get_repo_metadata_main(sysargs=None):
@@ -139,6 +147,7 @@ def get_repo_metadata_main(sysargs=None):
         dict: Metadata of the repository.
     """
     parser = setup_arg_parser(GET_REPO_METADATA_ARGS)
+
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
@@ -160,3 +169,48 @@ def get_repo_metadata_main(sysargs=None):
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res
+
+
+def upload_signatures_main(sysargs=None):
+    """
+    Entrypoint for uploading signatures from JSON or a file.
+
+    Returns:
+        list: List of uploaded signatures including auto-populated fields.
+    """
+    parser = setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
+    if sysargs:
+        args = parser.parse_args(sysargs[1:])
+    else:
+        args = parser.parse_args()  # pragma: no cover"
+
+    signatures_json = _get_string_or_file_contents(args.signatures)
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pyxis_client = setup_pyxis_client(args, tmpfile.name)
+        resp = pyxis_client.upload_signatures(signatures_json)
+
+        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+
+        return resp
+
+
+def _get_string_or_file_contents(value):
+    """
+    Conditionally load contents of a file if specified in argument value.
+
+    Detects whether the value is a reference to a file (@-prefixed like in
+    `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
+    otherwise returns the value as is.
+
+    Examples:
+        `{"foo"}` -- plain string, returned as is
+        `@items.json` -- file path; its contents are returned
+    """
+    if not value.startswith("@"):
+        return value
+
+    filename = value[1:]
+
+    with open(filename, "r") as f:
+        return f.read()
