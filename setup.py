@@ -85,7 +85,7 @@ setup(
         "console_scripts": [
             "pubtools-pyxis-get-operator-indices = pubtools._pyxis.pyxis_ops:get_operator_indices_main",
             "pubtools-pyxis-get-repo-metadata = pubtools._pyxis.pyxis_ops:get_repo_metadata_main",
-            "pubtools-pyxis-upload-signature = pubtools._pyxis.pyxis_ops:upload_signatures_main",
+            "pubtools-pyxis-upload-signatures = pubtools._pyxis.pyxis_ops:upload_signatures_main",
         ]
     },
     include_package_data=True,
