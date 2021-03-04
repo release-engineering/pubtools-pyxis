@@ -674,3 +674,33 @@ def load_data(filename):
 def load_response(filename):
     with open("tests/data/responses/{0}.json".format(filename)) as f:
         return f.read()
+
+
+def test_get_signatures(capsys):
+    hostname = "https://pyxis.engineering.redhat.com/"
+    data = json.load(open("tests/test_data/sigs_with_reference.json"))[0:3]
+    manifest_digest = "sha256:998046100b4affa43df4348f3616cff3b05983a8e7397a53c40fab14"
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--manifest-digest",
+        manifest_digest,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
+                hostname, manifest_digest
+            ),
+            json={"data": data},
+        )
+        pyxis_ops.get_signatures_main(args)
+    out, _ = capsys.readouterr()
+    assert out == expected

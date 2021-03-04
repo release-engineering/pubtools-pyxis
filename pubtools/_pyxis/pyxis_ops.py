@@ -84,6 +84,27 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
 }
 
 
+GET_SIGNATURES_ARGS = CMD_ARGS.copy()
+GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
+    "help": "comma separated manifest-digests to search",
+    "required": False,
+    "type": str,
+}
+
+
+GET_SIGNATURES_ARGS[("--reference",)] = {
+    "help": "reference",
+    "required": False,
+    "type": str,
+}
+
+GET_SIGNATURES_ARGS[("--sig-key-id",)] = {
+    "help": "sig-key-id",
+    "required": False,
+    "type": str,
+}
+
+
 def setup_pyxis_client(args, ccache_file):
     """
     Set up a PyxisClient instance according to specified parameters.
@@ -214,3 +235,26 @@ def _get_string_or_file_contents(value):
 
     with open(filename, "r") as f:
         return f.read()
+
+
+def get_signatures_main(sysargs=None):
+    """
+    Entrypoint for getting container signature metadata.
+
+    Returns:
+        list: container signature metadata satisfying the specified conditions.
+    """
+    parser = setup_arg_parser(GET_SIGNATURES_ARGS)
+    if sysargs:
+        args = parser.parse_args(sysargs[1:])
+    else:
+        args = parser.parse_args()  # pragma: no cover"
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pyxis_client = setup_pyxis_client(args, tmpfile.name)
+        res = pyxis_client.get_container_signatures(
+            args.manifest_digest, args.reference, args.sig_key_id
+        )
+
+        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return res
