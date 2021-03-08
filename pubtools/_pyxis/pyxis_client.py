@@ -158,16 +158,16 @@ class PyxisClient(object):
         signatures_url = "signatures"
         filter_urls = []
         if manifest_digests:
-            filter_urls.append("manifest_digest=in=({}),".format(manifest_digests))
+            filter_urls.append("manifest_digest=in=({0}),".format(manifest_digests))
         if references:
-            filter_urls.append("reference=in=({}),".format(references))
+            filter_urls.append("reference=in=({0}),".format(references))
         if sig_key_ids:
-            filter_urls.append("sig_key_id=in=({}),".format(sig_key_ids))
+            filter_urls.append("sig_key_id=in=({0}),".format(sig_key_ids))
 
         if filter_urls:
-            signatures_url = "{}{}".format(signatures_url, "?filter=")
+            signatures_url = "{0}{1}".format(signatures_url, "?filter=")
             for filter_url in filter_urls:
-                signatures_url = "{}{}".format(signatures_url, filter_url)
+                signatures_url = "{0}{1}".format(signatures_url, filter_url)
             signatures_url = signatures_url[0:-1]
 
         resp = self.pyxis_session.get(signatures_url)
