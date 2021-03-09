@@ -150,7 +150,7 @@ def test_get_repository_metadata_custom_registry():
 
 
 def test_get_signatures():
-    hostname = "https://pyxis.engineering.redhat.com/"
+    hostname = "https://pyxis-prod-url/"
     data = json.load(open("tests/test_data/sigs_with_reference.json"))
     with requests_mock.Mocker() as m:
         m.get(

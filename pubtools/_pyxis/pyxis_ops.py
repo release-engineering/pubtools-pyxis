@@ -83,21 +83,17 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
     "type": str,
 }
 
-
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
 GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
     "help": "comma separated manifest-digests to search",
     "required": False,
     "type": str,
 }
-
-
 GET_SIGNATURES_ARGS[("--reference",)] = {
     "help": "reference",
     "required": False,
     "type": str,
 }
-
 GET_SIGNATURES_ARGS[("--sig-key-id",)] = {
     "help": "sig-key-id",
     "required": False,

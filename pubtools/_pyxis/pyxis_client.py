@@ -145,11 +145,11 @@ class PyxisClient(object):
         """Get a list of signature metadata matching given fields.
 
         Args:
-            manifest_digests (comma seperated str)
+            manifest_digests (comma separated str)
                 manifest_digest used for searching in signatures.
-            references (comma seperated str)
+            references (comma separated str)
                 pull reference for image of signature stored.
-            sig_key_ids (comma seperated str)
+            sig_key_ids (comma separated str)
                 signature id used to create signature
 
         Returns:
