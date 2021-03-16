@@ -6,6 +6,7 @@ import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_ops, utils
+from tests.utils import load_data, load_response
 
 
 def test_argument_groups(capsys):
@@ -666,20 +667,9 @@ def test_upload_signatures_server_error_content(capsys):
     assert err == ""
 
 
-def load_data(filename):
-    with open("tests/data/{0}.json".format(filename)) as f:
-        return f.read()
-
-
-def load_response(filename):
-    with open("tests/data/responses/{0}.json".format(filename)) as f:
-        return f.read()
-
-
-def test_get_signatures(capsys):
-    hostname = "https://pyxis.engineering.redhat.com/"
-    data = json.load(open("tests/test_data/sigs_with_reference.json"))[0:3]
-    manifest_digest = "sha256:998046100b4affa43df4348f3616cff3b05983a8e7397a53c40fab14"
+def test_get_signatures(capsys, hostname):
+    data = json.loads(load_data("sigs_with_reference"))["data"][0:3]
+    manifest_digest = "sha256:dummy-manifest-digest-1"
     args = [
         "dummy",
         "--pyxis-server",

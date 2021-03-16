@@ -90,12 +90,12 @@ GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
     "type": str,
 }
 GET_SIGNATURES_ARGS[("--reference",)] = {
-    "help": "reference",
+    "help": "comma separated container pull reference to search",
     "required": False,
     "type": str,
 }
 GET_SIGNATURES_ARGS[("--sig-key-id",)] = {
-    "help": "sig-key-id",
+    "help": "comma separated sig-key-id to search",
     "required": False,
     "type": str,
 }

@@ -1,5 +1,6 @@
+from __future__ import division
+import math
 from requests.exceptions import HTTPError
-
 from .pyxis_session import PyxisSession
 
 
@@ -141,7 +142,9 @@ class PyxisClient(object):
 
         return data
 
-    def get_container_signatures(self, manifest_digests, references, sig_key_ids):
+    def get_container_signatures(
+        self, manifest_digests=None, references=None, sig_key_ids=None
+    ):
         """Get a list of signature metadata matching given fields.
 
         Args:
@@ -155,22 +158,50 @@ class PyxisClient(object):
         Returns:
             list: List of signature metadata matching given fields.
         """
-        signatures_url = "signatures"
-        filter_urls = []
+        signatures_endpoint = "signatures"
+        filter_criterias = []
         if manifest_digests:
-            filter_urls.append("manifest_digest=in=({0}),".format(manifest_digests))
+            filter_criterias.append(
+                "manifest_digest=in=({0}),".format(manifest_digests)
+            )
         if references:
-            filter_urls.append("reference=in=({0}),".format(references))
+            filter_criterias.append("reference=in=({0}),".format(references))
         if sig_key_ids:
-            filter_urls.append("sig_key_id=in=({0}),".format(sig_key_ids))
+            filter_criterias.append("sig_key_id=in=({0}),".format(sig_key_ids))
 
-        if filter_urls:
-            signatures_url = "{0}{1}".format(signatures_url, "?filter=")
-            for filter_url in filter_urls:
-                signatures_url = "{0}{1}".format(signatures_url, filter_url)
-            signatures_url = signatures_url[0:-1]
+        if filter_criterias:
+            signatures_endpoint = "{0}{1}{2}".format(
+                signatures_endpoint, "?filter=", "".join(filter_criterias)
+            )
+            signatures_endpoint = signatures_endpoint[0:-1]
 
-        resp = self.pyxis_session.get(signatures_url)
-        resp.raise_for_status()
+        resp = self._get_all_pages_response(signatures_endpoint)
 
-        return resp.json()["data"]
+        return resp
+
+    def _get_all_pages_response(self, endpoint, **kwargs):
+        """
+        Get response from all pages of pyxis.
+
+        Args:
+            endpoint (str): Endpoint of the request.
+            **kwargs: Additional arguments to add to the requests method.
+        Returns:
+            list: list of all data records returned from pyxis
+
+        """
+        all_resp = []
+        first_resp = self.pyxis_session.get(endpoint, **kwargs)
+        first_resp.raise_for_status()
+        first_resp = first_resp.json()
+        all_resp.extend(first_resp["data"])
+        # if total data is greater than data returned in first page,
+        # calculate number of pages and then consequently get response from each page
+        if len(first_resp["data"]) < first_resp.get("total"):
+            total_pages = int(math.ceil(first_resp["total"] / first_resp["page_size"]))
+            for page in range(1, total_pages):
+                params = {"page": page}
+                resp = self.pyxis_session.get(endpoint, params=params)
+                resp.raise_for_status()
+                all_resp.extend(resp.json()["data"])
+        return all_resp
