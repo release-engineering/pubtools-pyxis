@@ -151,21 +151,22 @@ def test_get_repository_metadata_custom_registry():
 
 
 def test_get_signatures(hostname):
-    data = json.loads(load_data("sigs_with_reference"))["data"]
+    all_signatures = json.loads(load_data("sigs_with_reference"))
     with requests_mock.Mocker() as m:
         m.get(
             "{0}v1/signatures".format(hostname),
-            json={"data": data},
+            json=all_signatures,
         )
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         res = my_client.get_container_signatures()
-        assert res == data
+        assert res == all_signatures["data"]
 
 
 def test_get_signatures_with_digest_reference(hostname):
-    data = json.loads(load_data("sigs_with_reference"))["data"][0:2]
+    all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
     manifest_to_search = "sha256:dummy-manifest-digest-1"
+    signatures_matching["data"] = all_signatures["data"][0:2]
     reference_to_search = (
         "registry.redhat.io/e2e-container/rhel-8-e2e-container-test-"
         "product:latest,registry.access.redhat.com/e2e-container/rhel-8-e2e-container-test-"
@@ -179,14 +180,14 @@ def test_get_signatures_with_digest_reference(hostname):
     with requests_mock.Mocker() as m:
         m.get(
             url_with_digest_ref,
-            json={"data": data},
+            json=signatures_matching,
         )
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         res = my_client.get_container_signatures(
             manifest_to_search, reference_to_search, None
         )
-        assert res == data
+        assert res == signatures_matching["data"]
         assert m.request_history[0].url == url_with_digest_ref
 
 

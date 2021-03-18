@@ -668,8 +668,9 @@ def test_upload_signatures_server_error_content(capsys):
 
 
 def test_get_signatures(capsys, hostname):
-    data = json.loads(load_data("sigs_with_reference"))["data"][0:3]
+    all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
     manifest_digest = "sha256:dummy-manifest-digest-1"
+    signatures_matching["data"] = all_signatures["data"][0:3]
     args = [
         "dummy",
         "--pyxis-server",
@@ -682,14 +683,16 @@ def test_get_signatures(capsys, hostname):
         "/root/name.key",
     ]
 
-    expected = json.dumps(data, sort_keys=True, indent=4, separators=(",", ": "))
+    expected = json.dumps(
+        signatures_matching["data"], sort_keys=True, indent=4, separators=(",", ": ")
+    )
 
     with requests_mock.Mocker() as m:
         m.get(
             "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
                 hostname, manifest_digest
             ),
-            json={"data": data},
+            json=signatures_matching,
         )
         pyxis_ops.get_signatures_main(args)
     out, _ = capsys.readouterr()

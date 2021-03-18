@@ -197,7 +197,7 @@ class PyxisClient(object):
         all_resp.extend(first_resp["data"])
         # if total data is greater than data returned in first page,
         # calculate number of pages and then consequently get response from each page
-        if len(first_resp["data"]) < first_resp.get("total"):
+        if len(first_resp["data"]) < first_resp["total"]:
             total_pages = int(math.ceil(first_resp["total"] / first_resp["page_size"]))
             for page in range(1, total_pages):
                 params = {"page": page}
