@@ -150,23 +150,10 @@ def test_get_repository_metadata_custom_registry():
         assert res == data
 
 
-def test_get_signatures(hostname):
-    all_signatures = json.loads(load_data("sigs_with_reference"))
-    with requests_mock.Mocker() as m:
-        m.get(
-            "{0}v1/signatures".format(hostname),
-            json=all_signatures,
-        )
-
-        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
-        res = my_client.get_container_signatures()
-        assert res == all_signatures["data"]
-
-
 def test_get_signatures_with_digest_reference(hostname):
     all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
-    manifest_to_search = "sha256:dummy-manifest-digest-1"
     signatures_matching["data"] = all_signatures["data"][0:2]
+    manifest_to_search = "sha256:dummy-manifest-digest-1"
     reference_to_search = (
         "registry.redhat.io/e2e-container/rhel-8-e2e-container-test-"
         "product:latest,registry.access.redhat.com/e2e-container/rhel-8-e2e-container-test-"
@@ -185,7 +172,7 @@ def test_get_signatures_with_digest_reference(hostname):
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         res = my_client.get_container_signatures(
-            manifest_to_search, reference_to_search, None
+            manifest_to_search, reference_to_search
         )
         assert res == signatures_matching["data"]
         assert m.request_history[0].url == url_with_digest_ref
@@ -194,18 +181,23 @@ def test_get_signatures_with_digest_reference(hostname):
 def test_get_signatures_from_multiple_pages(hostname):
     page_1_response = json.loads(load_data("signatures_page1"))
     page_2_response = json.loads(load_data("signatures_page2"))
+    manifest_to_search = (
+        "sha256:dummy-manifest-digest-1, sha256:dummy-manifest-digest-2"
+    )
     with requests_mock.Mocker() as m:
         m.get(
-            "{0}v1/signatures?filter=sig_key_id=in=({1})".format(hostname, "123123"),
+            "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
+                hostname, manifest_to_search
+            ),
             json=page_1_response,
         )
         m.get(
-            "{0}v1/signatures?filter=sig_key_id=in=({1})&page=1".format(
-                hostname, "123123"
+            "{0}v1/signatures?filter=manifest_digest=in=({1})&page=1".format(
+                hostname, manifest_to_search
             ),
             json=page_2_response,
         )
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
-        res = my_client.get_container_signatures(None, None, "123123")
+        res = my_client.get_container_signatures(manifest_to_search, None)
         assert res == page_1_response["data"] + page_2_response["data"]

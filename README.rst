@@ -97,17 +97,6 @@ Get signatures:
   --pyxis-server https://pyxis.engineering.redhat.com/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
-
-  pubtools-pyxis-get-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
-  --pyxis-ssl-crtfile /path/to/file.crt \
-  --pyxis-ssl-keyfile /path/to/file.key \
-  --sig-key-id sig-key-id-to-search
-
-  pubtools-pyxis-get-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
-  --pyxis-ssl-crtfile /path/to/file.crt \
-  --pyxis-ssl-keyfile /path/to/file.key \
   --manifest-digest sha256-digest-of-manifest,sha256-digest-of-other-manifest
 
   pubtools-pyxis-get-signatures \

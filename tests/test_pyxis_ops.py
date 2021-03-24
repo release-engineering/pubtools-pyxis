@@ -697,3 +697,21 @@ def test_get_signatures(capsys, hostname):
         pyxis_ops.get_signatures_main(args)
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_get_signatures_error(capsys, hostname):
+    no_filter_args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with pytest.raises(SystemExit) as system_error:
+        pyxis_ops.get_signatures_main(no_filter_args)
+
+    assert system_error.type == SystemExit
+    assert system_error.value.code == 2

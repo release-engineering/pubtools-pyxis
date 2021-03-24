@@ -142,9 +142,7 @@ class PyxisClient(object):
 
         return data
 
-    def get_container_signatures(
-        self, manifest_digests=None, references=None, sig_key_ids=None
-    ):
+    def get_container_signatures(self, manifest_digests=None, references=None):
         """Get a list of signature metadata matching given fields.
 
         Args:
@@ -152,34 +150,27 @@ class PyxisClient(object):
                 manifest_digest used for searching in signatures.
             references (comma separated str)
                 pull reference for image of signature stored.
-            sig_key_ids (comma separated str)
-                signature id used to create signature
 
         Returns:
             list: List of signature metadata matching given fields.
         """
         signatures_endpoint = "signatures"
-        filter_criterias = []
+        filter_criteria = []
         if manifest_digests:
-            filter_criterias.append(
-                "manifest_digest=in=({0}),".format(manifest_digests)
-            )
+            filter_criteria.append("manifest_digest=in=({0}),".format(manifest_digests))
         if references:
-            filter_criterias.append("reference=in=({0}),".format(references))
-        if sig_key_ids:
-            filter_criterias.append("sig_key_id=in=({0}),".format(sig_key_ids))
+            filter_criteria.append("reference=in=({0}),".format(references))
 
-        if filter_criterias:
-            signatures_endpoint = "{0}{1}{2}".format(
-                signatures_endpoint, "?filter=", "".join(filter_criterias)
-            )
-            signatures_endpoint = signatures_endpoint[0:-1]
+        signatures_endpoint = "{0}{1}{2}".format(
+            signatures_endpoint, "?filter=", "".join(filter_criteria)
+        )
+        signatures_endpoint = signatures_endpoint[0:-1]
 
-        resp = self._get_all_pages_response(signatures_endpoint)
+        resp = self._get_items_from_all_pages(signatures_endpoint)
 
         return resp
 
-    def _get_all_pages_response(self, endpoint, **kwargs):
+    def _get_items_from_all_pages(self, endpoint, **kwargs):
         """
         Get response from all pages of pyxis.
 
@@ -193,12 +184,14 @@ class PyxisClient(object):
         all_resp = []
         first_resp = self.pyxis_session.get(endpoint, **kwargs)
         first_resp.raise_for_status()
-        first_resp = first_resp.json()
-        all_resp.extend(first_resp["data"])
+        first_resp_json = first_resp.json()
+        all_resp.extend(first_resp_json["data"])
         # if total data is greater than data returned in first page,
         # calculate number of pages and then consequently get response from each page
-        if len(first_resp["data"]) < first_resp["total"]:
-            total_pages = int(math.ceil(first_resp["total"] / first_resp["page_size"]))
+        if len(first_resp_json["data"]) < first_resp_json["total"]:
+            total_pages = int(
+                math.ceil(first_resp_json["total"] / first_resp_json["page_size"])
+            )
             for page in range(1, total_pages):
                 params = {"page": page}
                 resp = self.pyxis_session.get(endpoint, params=params)

@@ -6,7 +6,7 @@
     "creation_date": "2021-03-03T23:34:16.016000+00:00",
     "last_update_date": "2021-03-03T23:34:16.016000+00:00",
     "last_updated_by": "pub_user",
-    "manifest_digest": "sha256:sha256:dummy-manifest-digest-2",
+    "manifest_digest": "sha256:dummy-manifest-digest-2",
     "reference": "registry.access.redhat.com/openshift3/logging-deployer:3.3.1",
     "repository": "openshift3/logging-deployer",
     "sig_key_id": "123123"
@@ -17,7 +17,7 @@
     "creation_date": "2021-03-03T23:34:16.016000+00:00",
     "last_update_date": "2021-03-03T23:34:16.016000+00:00",
     "last_updated_by": "pub_user",
-    "manifest_digest": "sha256:sha256:dummy-manifest-digest-2",
+    "manifest_digest": "sha256:dummy-manifest-digest-2",
     "reference": "registry.redhat.io/openshift3/logging-deployer:3.3.1",
     "repository": "openshift3/logging-deployer",
     "sig_key_id": "123123"
