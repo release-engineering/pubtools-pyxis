@@ -105,3 +105,4 @@ Get signatures:
   --pyxis-ssl-keyfile /path/to/file.key \
   --manifest-digest sha256-digest-of-manifest
   --reference pull-reference-of-image,pull-reference-of-image2
+
