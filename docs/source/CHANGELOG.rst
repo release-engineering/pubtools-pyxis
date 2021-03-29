@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+1.1.0 (2021-03-29)
+------------------
+
+* Added upload-signatures, get-signatures to interact with pyxis sigstore
+* Added get-repository-metadata to fetch repository data from pyxis
+* Fixed py2.6 pip url
+
 1.0.0 (2020-11-27)
 ------------------
 
