@@ -35,19 +35,19 @@ Get operator indices:
 ::
 
   pubtools-pyxis-get-operator-indices \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-krb-principal lgallovi@REDHAT.COM \
   --ocp-versions-range 4.6 \
   --pyxis-insecure
 
   pubtools-pyxis-get-operator-indices \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-krb-principal iib-stage@REDHAT.COM \
   --pyxis-krb-ktfile /path/to/file.keytab \
   --ocp-versions-range 4.5-4.7
 
   pubtools-pyxis-get-operator-indices \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --ocp-versions-range 4.6
@@ -56,20 +56,20 @@ Get repository metadata:
 ::
 
   pubtools-pyxis-get-repo-metadata \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --repo-name some-repo/name
 
   pubtools-pyxis-get-repo-metadata \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --repo-name some-repo/name \
   --only-internal-registry
 
   pubtools-pyxis-get-repo-metadata \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --repo-name some-repo/name \
@@ -79,13 +79,13 @@ Upload signatures:
 ::
 
   pubtools-pyxis-upload-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --signatures '[{"foo": "bar"}]'
 
   pubtools-pyxis-upload-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --signatures @signatures.json
@@ -94,13 +94,13 @@ Get signatures:
 ::
 
   pubtools-pyxis-get-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --manifest-digest sha256-digest-of-manifest,sha256-digest-of-other-manifest
 
   pubtools-pyxis-get-signatures \
-  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-server https://pyxis-server-url/ \
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --manifest-digest sha256-digest-of-manifest
