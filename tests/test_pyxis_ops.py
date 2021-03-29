@@ -6,6 +6,7 @@ import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_ops, utils
+from tests.utils import load_data, load_response
 
 
 def test_argument_groups(capsys):
@@ -666,11 +667,51 @@ def test_upload_signatures_server_error_content(capsys):
     assert err == ""
 
 
-def load_data(filename):
-    with open("tests/data/{0}.json".format(filename)) as f:
-        return f.read()
+def test_get_signatures(capsys, hostname):
+    all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
+    manifest_digest = "sha256:dummy-manifest-digest-1"
+    signatures_matching["data"] = all_signatures["data"][0:3]
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--manifest-digest",
+        manifest_digest,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(
+        signatures_matching["data"], sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
+                hostname, manifest_digest
+            ),
+            json=signatures_matching,
+        )
+        pyxis_ops.get_signatures_main(args)
+    out, _ = capsys.readouterr()
+    assert out == expected
 
 
-def load_response(filename):
-    with open("tests/data/responses/{0}.json".format(filename)) as f:
-        return f.read()
+def test_get_signatures_error(capsys, hostname):
+    no_filter_args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with pytest.raises(SystemExit) as system_error:
+        pyxis_ops.get_signatures_main(no_filter_args)
+
+    assert system_error.type == SystemExit
+    assert system_error.value.code == 2

@@ -89,3 +89,19 @@ Upload signatures:
   --pyxis-ssl-crtfile /path/to/file.crt \
   --pyxis-ssl-keyfile /path/to/file.key \
   --signatures @signatures.json
+
+Get signatures:
+::
+
+  pubtools-pyxis-get-signatures \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --manifest-digest sha256-digest-of-manifest,sha256-digest-of-other-manifest
+
+  pubtools-pyxis-get-signatures \
+  --pyxis-server https://pyxis.engineering.redhat.com/ \
+  --pyxis-ssl-crtfile /path/to/file.crt \
+  --pyxis-ssl-keyfile /path/to/file.key \
+  --manifest-digest sha256-digest-of-manifest
+  --reference pull-reference-of-image,pull-reference-of-image2

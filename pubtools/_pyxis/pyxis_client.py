@@ -1,5 +1,6 @@
+from __future__ import division
+import math
 from requests.exceptions import HTTPError
-
 from .pyxis_session import PyxisSession
 
 
@@ -140,3 +141,60 @@ class PyxisClient(object):
             raise HTTPError("{0}\n{1}".format(e, extra_msg))
 
         return data
+
+    def get_container_signatures(self, manifest_digests=None, references=None):
+        """Get a list of signature metadata matching given fields.
+
+        Args:
+            manifest_digests (comma separated str)
+                manifest_digest used for searching in signatures.
+            references (comma separated str)
+                pull reference for image of signature stored.
+
+        Returns:
+            list: List of signature metadata matching given fields.
+        """
+        signatures_endpoint = "signatures"
+        filter_criteria = []
+        if manifest_digests:
+            filter_criteria.append("manifest_digest=in=({0}),".format(manifest_digests))
+        if references:
+            filter_criteria.append("reference=in=({0}),".format(references))
+
+        signatures_endpoint = "{0}{1}{2}".format(
+            signatures_endpoint, "?filter=", "".join(filter_criteria)
+        )
+        signatures_endpoint = signatures_endpoint[0:-1]
+
+        resp = self._get_items_from_all_pages(signatures_endpoint)
+
+        return resp
+
+    def _get_items_from_all_pages(self, endpoint, **kwargs):
+        """
+        Get response from all pages of pyxis.
+
+        Args:
+            endpoint (str): Endpoint of the request.
+            **kwargs: Additional arguments to add to the requests method.
+        Returns:
+            list: list of all data records returned from pyxis
+
+        """
+        all_resp = []
+        first_resp = self.pyxis_session.get(endpoint, **kwargs)
+        first_resp.raise_for_status()
+        first_resp_json = first_resp.json()
+        all_resp.extend(first_resp_json["data"])
+        # if total data is greater than data returned in first page,
+        # calculate number of pages and then consequently get response from each page
+        if len(first_resp_json["data"]) < first_resp_json["total"]:
+            total_pages = int(
+                math.ceil(first_resp_json["total"] / first_resp_json["page_size"])
+            )
+            for page in range(1, total_pages):
+                params = {"page": page}
+                resp = self.pyxis_session.get(endpoint, params=params)
+                resp.raise_for_status()
+                all_resp.extend(resp.json()["data"])
+        return all_resp
