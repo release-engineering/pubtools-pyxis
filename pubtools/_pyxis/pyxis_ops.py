@@ -85,12 +85,12 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
 
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
 GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
-    "help": "comma separated manifest-digests to search",
+    "help": "comma separated manifest-digests to search or json file",
     "required": False,
     "type": str,
 }
 GET_SIGNATURES_ARGS[("--reference",)] = {
-    "help": "comma separated container pull reference to search",
+    "help": "comma separated container pull reference to search or json file",
     "required": False,
     "type": str,
 }
@@ -207,7 +207,7 @@ def upload_signatures_main(sysargs=None):
         return resp
 
 
-def _get_string_or_file_contents(value):
+def _get_string_or_file_contents(value, str_format=None):
     """
     Conditionally load contents of a file if specified in argument value.
 
@@ -225,6 +225,12 @@ def _get_string_or_file_contents(value):
     filename = value[1:]
 
     with open(filename, "r") as f:
+        if str_format == "csv":
+            file_content_json = json.load(f)
+
+            csv_string = ",".join(file_content_json)
+
+            return csv_string
         return f.read()
 
 
@@ -241,14 +247,17 @@ def get_signatures_main(sysargs=None):
     else:
         args = parser.parse_args()  # pragma: no cover"
 
+    references = manifest_digests = None
     if not (args.manifest_digest or args.reference):
         parser.error("Give atleast 1 filter, --manifest_digest and/or --reference")
+    if args.manifest_digest:
+        manifest_digests = _get_string_or_file_contents(args.manifest_digest, "csv")
+    if args.reference:
+        references = _get_string_or_file_contents(args.reference, "csv")
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
-        res = pyxis_client.get_container_signatures(
-            args.manifest_digest, args.reference
-        )
+        res = pyxis_client.get_container_signatures(manifest_digests, references)
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res

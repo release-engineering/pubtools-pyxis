@@ -715,3 +715,39 @@ def test_get_signatures_error(capsys, hostname):
 
     assert system_error.type == SystemExit
     assert system_error.value.code == 2
+
+
+def test_get_signatures_manifests_file(capsys):
+    hostname = "https://pyxis.remote.host/"
+
+    data_file_path = "@tests/data/manifest_digests.json"
+    signatures_matching = json.loads(load_data("sigs_with_reference"))
+    manifest_digest = (
+        "sha256:dummy-manifest-digest-1,sha256:sha256:dummy-manifest-digest-2"
+    )
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--manifest-digest",
+        data_file_path,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = json.dumps(
+        signatures_matching["data"], sort_keys=True, indent=4, separators=(",", ": ")
+    )
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
+                hostname, manifest_digest
+            ),
+            json=signatures_matching,
+        )
+        pyxis_ops.get_signatures_main(args)
+    out, _ = capsys.readouterr()
+    assert out == expected
