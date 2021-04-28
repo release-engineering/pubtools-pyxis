@@ -670,6 +670,7 @@ def test_upload_signatures_server_error_content(capsys):
 def test_get_signatures(capsys, hostname):
     all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
     manifest_digest = "sha256:dummy-manifest-digest-1"
+    reference = "registry.access.redhat.com/e2e-container/rhel-8-e2e-container-test-product:latest"
     signatures_matching["data"] = all_signatures["data"][0:3]
     args = [
         "dummy",
@@ -677,6 +678,8 @@ def test_get_signatures(capsys, hostname):
         hostname,
         "--manifest-digest",
         manifest_digest,
+        "--reference",
+        reference,
         "--pyxis-ssl-crtfile",
         "/root/name.crt",
         "--pyxis-ssl-keyfile",
@@ -689,8 +692,8 @@ def test_get_signatures(capsys, hostname):
 
     with requests_mock.Mocker() as m:
         m.get(
-            "{0}v1/signatures?filter=manifest_digest=in=({1})".format(
-                hostname, manifest_digest
+            "{0}v1/signatures?filter=manifest_digest=in=({1}),reference=in=({2})".format(
+                hostname, manifest_digest, reference
             ),
             json=signatures_matching,
         )
