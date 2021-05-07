@@ -1,9 +1,14 @@
 import json
 import mock
+
+import pytest
+import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_client, pyxis_authentication
 from tests.utils import load_data
+
+# flake8: noqa: W503
 
 
 @mock.patch("pubtools._pyxis.pyxis_client.PyxisSession")
@@ -201,3 +206,60 @@ def test_get_signatures_from_multiple_pages(hostname):
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         res = my_client.get_container_signatures(manifest_to_search, None)
         assert res == page_1_response["data"] + page_2_response["data"]
+
+
+def test_delete_container_signatures_success(hostname):
+    ids = ["g1g1g1g1", "h2h2h2h2"]
+
+    with requests_mock.Mocker() as m:
+        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1")
+        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        my_client.delete_container_signatures(ids)
+        assert len(m.request_history) == 2
+        assert (
+            m.request_history[0].url
+            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+        )
+        assert (
+            m.request_history[1].url
+            == "https://pyxis-prod-url/v1/signatures/id/h2h2h2h2"
+        )
+
+
+def test_delete_container_signatures_tolerate_404(hostname):
+    ids = ["g1g1g1g1", "h2h2h2h2"]
+
+    with requests_mock.Mocker() as m:
+        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1", status_code=404)
+        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        my_client.delete_container_signatures(ids)
+        assert len(m.request_history) == 2
+        assert (
+            m.request_history[0].url
+            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+        )
+        assert (
+            m.request_history[1].url
+            == "https://pyxis-prod-url/v1/signatures/id/h2h2h2h2"
+        )
+
+
+def test_delete_container_signatures_server_error(hostname):
+    ids = ["g1g1g1g1", "h2h2h2h2"]
+
+    with requests_mock.Mocker() as m:
+        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1", status_code=500)
+        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+
+        my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
+        with pytest.raises(requests.exceptions.HTTPError, match="500 Server Error.*"):
+            my_client.delete_container_signatures(ids)
+        assert len(m.request_history) == 1
+        assert (
+            m.request_history[0].url
+            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+        )

@@ -753,3 +753,50 @@ def test_get_signatures_manifests_file(capsys):
         pyxis_ops.get_signatures_main(args)
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_delete_signatures(hostname):
+    ids = "g2g2g2g2,h3h3h3h3"
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--ids",
+        ids,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.delete("{0}v1/signatures/id/{1}".format(hostname, "g2g2g2g2"))
+        m.delete("{0}v1/signatures/id/{1}".format(hostname, "h3h3h3h3"))
+
+        pyxis_ops.delete_signatures_main(args)
+
+        assert len(m.request_history) == 2
+        assert m.request_history[0].url == "{0}v1/signatures/id/{1}".format(
+            hostname, "g2g2g2g2"
+        )
+        assert m.request_history[1].url == "{0}v1/signatures/id/{1}".format(
+            hostname, "h3h3h3h3"
+        )
+
+
+def test_delete_signatures_error(capsys, hostname):
+    no_filter_args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with pytest.raises(SystemExit) as system_error:
+        pyxis_ops.delete_signatures_main(no_filter_args)
+
+    assert system_error.type == SystemExit
+    assert system_error.value.code == 2

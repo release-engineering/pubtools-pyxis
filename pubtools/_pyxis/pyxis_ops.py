@@ -95,6 +95,13 @@ GET_SIGNATURES_ARGS[("--reference",)] = {
     "type": str,
 }
 
+DELETE_SIGNATURES_ARGS = CMD_ARGS.copy()
+DELETE_SIGNATURES_ARGS[("--ids",)] = {
+    "help": "comma separated signature IDs to remove or json file when prefixed with @",
+    "required": True,
+    "type": str,
+}
+
 
 def setup_pyxis_client(args, ccache_file):
     """
@@ -275,3 +282,24 @@ def get_signatures_main(sysargs=None):
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res
+
+
+def delete_signatures_main(sysargs=None):
+    """
+    Entrypoint for removing existing signatures.
+
+    Returns:
+        list: Signatures which were deleted.
+    """
+    parser = setup_arg_parser(DELETE_SIGNATURES_ARGS)
+    if sysargs:
+        args = parser.parse_args(sysargs[1:])
+    else:
+        args = parser.parse_args()  # pragma: no cover"
+
+    if args.ids:
+        signature_ids = deserialize_list_from_arg(args.ids, csv_input=True)
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pyxis_client = setup_pyxis_client(args, tmpfile.name)
+        pyxis_client.delete_container_signatures(signature_ids)
