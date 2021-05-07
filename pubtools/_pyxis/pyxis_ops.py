@@ -280,7 +280,7 @@ def get_signatures_main(sysargs=None):
 
     csv_references = csv_manifest_digests = None
     if not (args.manifest_digest or args.reference):
-        parser.error("Give atleast 1 filter, --manifest_digest and/or --reference")
+        parser.error("Give atleast 1 filter, --manifest-digest and/or --reference")
     if args.manifest_digest:
         # csv_manifest_digests = get_csv_string_from_input_or_file(args.manifest_digest)
         csv_manifest_digests = convert_string_to_csv(
