@@ -85,12 +85,12 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
 
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
 GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
-    "help": "comma separated manifest-digests to search or json file",
+    "help": "comma separated manifest-digests to search or json file when prefixed with @",
     "required": False,
     "type": str,
 }
 GET_SIGNATURES_ARGS[("--reference",)] = {
-    "help": "comma separated container pull reference to search or json file",
+    "help": "comma separated container pull reference to search or json file when prefixed with @",
     "required": False,
     "type": str,
 }
@@ -207,14 +207,13 @@ def upload_signatures_main(sysargs=None):
         return resp
 
 
-def _get_string_or_file_contents(value, str_format=None):
+def _get_string_or_file_contents(value):
     """
     Conditionally load contents of a file if specified in argument value.
 
     Detects whether the value is a reference to a file (@-prefixed like in
     `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
     otherwise returns the value as is.
-
     Examples:
         `{"foo"}` -- plain string, returned as is
         `@items.json` -- file path; its contents are returned
@@ -225,13 +224,45 @@ def _get_string_or_file_contents(value, str_format=None):
     filename = value[1:]
 
     with open(filename, "r") as f:
-        if str_format == "csv":
-            file_content_json = json.load(f)
-
-            csv_string = ",".join(file_content_json)
-
-            return csv_string
         return f.read()
+
+
+def convert_string_to_csv(value):
+    """
+    Convert input string to comma separated values.
+
+    the input string in the current use case can be already csv
+    or a json string obtained by reading json file
+    """
+    # if string content is obtained from file, its in json form
+    # convert that to csv
+    try:
+        plist = json.loads(value)
+        return ",".join(plist)
+    except Exception:
+        # if it cannot be converted to json, assume it was already the comma
+        # separated input
+        return value
+
+
+def get_csv_string_from_input_or_file(value):
+    """
+    Conditionally load contents of a file if specified in argument value.
+
+    Detects whether the value is a reference to a file (@-prefixed like in
+    `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
+    otherwise returns the value as is.
+    Examples:
+        `"foo1,foo2"` -- plain string, returned as is
+        `@items.json` -- file path; its json contents are converted into csv and returned
+    """
+    if not value.startswith("@"):
+        return value
+    filename = value[1:]
+
+    with open(filename, "r") as f:
+        json_file_content = json.loads(f)
+    return ",".join(json_file_content)
 
 
 def get_signatures_main(sysargs=None):
@@ -247,17 +278,24 @@ def get_signatures_main(sysargs=None):
     else:
         args = parser.parse_args()  # pragma: no cover"
 
-    references = manifest_digests = None
+    csv_references = csv_manifest_digests = None
     if not (args.manifest_digest or args.reference):
         parser.error("Give atleast 1 filter, --manifest_digest and/or --reference")
     if args.manifest_digest:
-        manifest_digests = _get_string_or_file_contents(args.manifest_digest, "csv")
+        # csv_manifest_digests = get_csv_string_from_input_or_file(args.manifest_digest)
+        csv_manifest_digests = convert_string_to_csv(
+            _get_string_or_file_contents(args.manifest_digest)
+        )
     if args.reference:
-        references = _get_string_or_file_contents(args.reference, "csv")
+        csv_references = convert_string_to_csv(
+            _get_string_or_file_contents(args.reference)
+        )
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
-        res = pyxis_client.get_container_signatures(manifest_digests, references)
+        res = pyxis_client.get_container_signatures(
+            csv_manifest_digests, csv_references
+        )
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res
