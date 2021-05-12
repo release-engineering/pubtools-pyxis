@@ -476,7 +476,7 @@ def test_upload_signature_json(capsys):
 
         pyxis_ops.upload_signatures_main(args)
 
-        assert m.last_request.text == data
+        assert m.last_request.json() == json.loads(data)
 
     out, _ = capsys.readouterr()
     assert out == expected_out
@@ -508,8 +508,7 @@ def test_upload_signature_file(capsys):
         m.post("{0}v1/signatures".format(hostname), text=response)
 
         pyxis_ops.upload_signatures_main(args)
-
-        assert m.last_request.text.strip() == data.strip()
+        assert m.last_request.json() == json.loads(data.strip())
 
     out, _ = capsys.readouterr()
     assert out == expected_out

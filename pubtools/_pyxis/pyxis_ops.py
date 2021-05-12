@@ -196,7 +196,7 @@ def upload_signatures_main(sysargs=None):
     else:
         args = parser.parse_args()  # pragma: no cover"
 
-    signatures_json = _get_string_or_file_contents(args.signatures)
+    signatures_json = serialize_to_json(deserialize_list_from_arg(args.signatures))
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
@@ -207,62 +207,39 @@ def upload_signatures_main(sysargs=None):
         return resp
 
 
-def _get_string_or_file_contents(value):
+def deserialize_list_from_arg(value, csv_input=False):
     """
     Conditionally load contents of a file if specified in argument value.
 
     Detects whether the value is a reference to a file (@-prefixed like in
-    `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
-    otherwise returns the value as is.
+    `gcc -o`, `curl -d`, etc.) and returns its contents in list if applicable;
+    otherwise returns the value as a list.
     Examples:
-        `{"foo"}` -- plain string, returned as is
-        `@items.json` -- file path; its contents are returned
+        `{"foo"}` -- plain string, returned as a list
+        `@items.json` -- file path; its contents are returned in a list
     """
     if not value.startswith("@"):
-        return value
+        if csv_input:
+            # convert comma separated string into list
+            return value.split(",")
+        # convert json string into list
+        return json.loads(value)
 
     filename = value[1:]
 
     with open(filename, "r") as f:
-        return f.read()
+        # all file content is returned as list
+        return json.load(f)
 
 
-def convert_string_to_csv(value):
-    """
-    Convert input string to comma separated values.
-
-    the input string in the current use case can be already csv
-    or a json string obtained by reading json file
-    """
-    # if string content is obtained from file, its in json form
-    # convert that to csv
-    try:
-        plist = json.loads(value)
-        return ",".join(plist)
-    except Exception:
-        # if it cannot be converted to json, assume it was already the comma
-        # separated input
-        return value
+def serialize_to_json(list_value):
+    """Convert any python list to json."""
+    return json.dumps(list_value)
 
 
-def get_csv_string_from_input_or_file(value):
-    """
-    Conditionally load contents of a file if specified in argument value.
-
-    Detects whether the value is a reference to a file (@-prefixed like in
-    `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
-    otherwise returns the value as is.
-    Examples:
-        `"foo1,foo2"` -- plain string, returned as is
-        `@items.json` -- file path; its json contents are converted into csv and returned
-    """
-    if not value.startswith("@"):
-        return value
-    filename = value[1:]
-
-    with open(filename, "r") as f:
-        json_file_content = json.loads(f)
-    return ",".join(json_file_content)
+def serialize_to_csv_from_list(list_value):
+    """Convert a list to comma separated string."""
+    return ",".join(list_value)
 
 
 def get_signatures_main(sysargs=None):
@@ -282,13 +259,12 @@ def get_signatures_main(sysargs=None):
     if not (args.manifest_digest or args.reference):
         parser.error("Give atleast 1 filter, --manifest-digest and/or --reference")
     if args.manifest_digest:
-        # csv_manifest_digests = get_csv_string_from_input_or_file(args.manifest_digest)
-        csv_manifest_digests = convert_string_to_csv(
-            _get_string_or_file_contents(args.manifest_digest)
+        csv_manifest_digests = serialize_to_csv_from_list(
+            deserialize_list_from_arg(args.manifest_digest, csv_input=True)
         )
     if args.reference:
-        csv_references = convert_string_to_csv(
-            _get_string_or_file_contents(args.reference)
+        csv_references = serialize_to_csv_from_list(
+            deserialize_list_from_arg(args.reference, csv_input=True)
         )
 
     with tempfile.NamedTemporaryFile() as tmpfile:
