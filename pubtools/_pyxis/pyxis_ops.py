@@ -85,12 +85,12 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
 
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
 GET_SIGNATURES_ARGS[("--manifest-digest",)] = {
-    "help": "comma separated manifest-digests to search",
+    "help": "comma separated manifest-digests to search or json file when prefixed with @",
     "required": False,
     "type": str,
 }
 GET_SIGNATURES_ARGS[("--reference",)] = {
-    "help": "comma separated container pull reference to search",
+    "help": "comma separated container pull reference to search or json file when prefixed with @",
     "required": False,
     "type": str,
 }
@@ -196,7 +196,7 @@ def upload_signatures_main(sysargs=None):
     else:
         args = parser.parse_args()  # pragma: no cover"
 
-    signatures_json = _get_string_or_file_contents(args.signatures)
+    signatures_json = serialize_to_json(deserialize_list_from_arg(args.signatures))
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
@@ -207,25 +207,39 @@ def upload_signatures_main(sysargs=None):
         return resp
 
 
-def _get_string_or_file_contents(value):
+def deserialize_list_from_arg(value, csv_input=False):
     """
     Conditionally load contents of a file if specified in argument value.
 
     Detects whether the value is a reference to a file (@-prefixed like in
-    `gcc -o`, `curl -d`, etc.) and returns its contents if applicable;
-    otherwise returns the value as is.
-
+    `gcc -o`, `curl -d`, etc.) and returns its contents in list if applicable;
+    otherwise returns the value as a list.
     Examples:
-        `{"foo"}` -- plain string, returned as is
-        `@items.json` -- file path; its contents are returned
+        `{"foo"}` -- plain string, returned as a list
+        `@items.json` -- file path; its contents are returned in a list
     """
     if not value.startswith("@"):
-        return value
+        if csv_input:
+            # convert comma separated string into list
+            return value.split(",")
+        # convert json string into list
+        return json.loads(value)
 
     filename = value[1:]
 
     with open(filename, "r") as f:
-        return f.read()
+        # all file content is returned as list
+        return json.load(f)
+
+
+def serialize_to_json(list_value):
+    """Convert any python list to json."""
+    return json.dumps(list_value)
+
+
+def serialize_to_csv_from_list(list_value):
+    """Convert a list to comma separated string."""
+    return ",".join(list_value)
 
 
 def get_signatures_main(sysargs=None):
@@ -241,13 +255,22 @@ def get_signatures_main(sysargs=None):
     else:
         args = parser.parse_args()  # pragma: no cover"
 
+    csv_references = csv_manifest_digests = None
     if not (args.manifest_digest or args.reference):
-        parser.error("Give atleast 1 filter, --manifest_digest and/or --reference")
+        parser.error("Give atleast 1 filter, --manifest-digest and/or --reference")
+    if args.manifest_digest:
+        csv_manifest_digests = serialize_to_csv_from_list(
+            deserialize_list_from_arg(args.manifest_digest, csv_input=True)
+        )
+    if args.reference:
+        csv_references = serialize_to_csv_from_list(
+            deserialize_list_from_arg(args.reference, csv_input=True)
+        )
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
         res = pyxis_client.get_container_signatures(
-            args.manifest_digest, args.reference
+            csv_manifest_digests, csv_references
         )
 
         json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
