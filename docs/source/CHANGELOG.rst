@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+1.2.0 (2021-06-10)
+------------------
+
+* Added the ability to add file as input type for --manifest_digests and --reference for get-signatures
+* Added entrypoint for removing signatures
+
 1.1.0 (2021-03-29)
 ------------------
 
