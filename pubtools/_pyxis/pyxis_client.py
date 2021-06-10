@@ -198,3 +198,17 @@ class PyxisClient(object):
                 resp.raise_for_status()
                 all_resp.extend(resp.json()["data"])
         return all_resp
+
+    def delete_container_signatures(self, signature_ids):
+        """Delete signatures matching given fields.
+
+        Args:
+            signature_ids ([str])
+                Internal Pyxis signature IDs of signatures which should be removed.
+        """
+        delete_endpoint = "signatures/id/{id}"
+
+        for signature_id in signature_ids:
+            resp = self.pyxis_session.delete(delete_endpoint.format(id=signature_id))
+            if resp.status_code != 404:
+                resp.raise_for_status()
