@@ -135,6 +135,11 @@ def setup_pyxis_client(args, ccache_file):
     return PyxisClient(args.pyxis_server, auth=auth, verify=not args.pyxis_insecure)
 
 
+def set_get_operator_indices_args():
+    """Set up argparser without extra parameters, this method is used for auto doc generation."""
+    return setup_arg_parser(GET_OPERATORS_INDICES_ARGS)
+
+
 def get_operator_indices_main(sysargs=None):
     """
     Entrypoint for getting operator indices.
@@ -142,7 +147,7 @@ def get_operator_indices_main(sysargs=None):
     Returns:
         list: Index images satisfying the specified conditions.
     """
-    parser = setup_arg_parser(GET_OPERATORS_INDICES_ARGS)
+    parser = set_get_operator_indices_args()
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
@@ -158,6 +163,11 @@ def get_operator_indices_main(sysargs=None):
         return resp
 
 
+def set_get_repo_metadata_args():
+    """Set up argparser without extra parameters, this method is used for auto doc generation."""
+    return setup_arg_parser(GET_REPO_METADATA_ARGS)
+
+
 def get_repo_metadata_main(sysargs=None):
     """
     Entrypoint for getting repository metadata.
@@ -165,7 +175,7 @@ def get_repo_metadata_main(sysargs=None):
     Returns:
         dict: Metadata of the repository.
     """
-    parser = setup_arg_parser(GET_REPO_METADATA_ARGS)
+    parser = set_get_repo_metadata_args()
 
     if sysargs:
         args = parser.parse_args(sysargs[1:])
@@ -190,6 +200,11 @@ def get_repo_metadata_main(sysargs=None):
         return res
 
 
+def set_upload_signatures_args():
+    """Set up argparser without extra parameters, this method is used for auto doc generation."""
+    return setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
+
+
 def upload_signatures_main(sysargs=None):
     """
     Entrypoint for uploading signatures from JSON or a file.
@@ -197,7 +212,7 @@ def upload_signatures_main(sysargs=None):
     Returns:
         list: List of uploaded signatures including auto-populated fields.
     """
-    parser = setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
+    parser = set_upload_signatures_args()
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
@@ -249,6 +264,11 @@ def serialize_to_csv_from_list(list_value):
     return ",".join(list_value)
 
 
+def set_get_signatures_args():
+    """Set up argparser without extra parameters, this method is used for auto doc generation."""
+    return setup_arg_parser(GET_SIGNATURES_ARGS)
+
+
 def get_signatures_main(sysargs=None):
     """
     Entrypoint for getting container signature metadata.
@@ -256,7 +276,7 @@ def get_signatures_main(sysargs=None):
     Returns:
         list: container signature metadata satisfying the specified conditions.
     """
-    parser = setup_arg_parser(GET_SIGNATURES_ARGS)
+    parser = set_get_signatures_args()
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
@@ -284,6 +304,11 @@ def get_signatures_main(sysargs=None):
         return res
 
 
+def set_delete_signatures_args():
+    """Set up argparser without extra parameters, this method is used for auto doc generation."""
+    return setup_arg_parser(DELETE_SIGNATURES_ARGS)
+
+
 def delete_signatures_main(sysargs=None):
     """
     Entrypoint for removing existing signatures.
@@ -291,7 +316,7 @@ def delete_signatures_main(sysargs=None):
     Returns:
         list: Signatures which were deleted.
     """
-    parser = setup_arg_parser(DELETE_SIGNATURES_ARGS)
+    parser = set_delete_signatures_args()
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
