@@ -5,7 +5,7 @@ Get container image signatures
 
 Get existing container image signatures from Pyxis. The signatures matching specified criteria will be fetched. 
 
-The desired signatures can be filtered based on two criteria: manifest digest and image reference. Multiple values of each criterion can be specified as CSV. Both criteria may be used simultaniously, and an "OR" operator will be used between them (signatures matching either criterion will be returned).
+The desired signatures can be filtered based on two criteria: manifest digest and image reference. Multiple values of each criterion can be specified as CSV. Both criteria may be used simultaneously, and an "OR" operator will be used between them (signatures matching either criterion will be returned).
 
 CLI reference
 -------------
