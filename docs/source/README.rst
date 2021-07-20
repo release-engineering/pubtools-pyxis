@@ -16,7 +16,7 @@ Features
 ========
 
 * pubtools-pyxis-get-operator-indices - Get a list of index images satisfying the specified conditions
-* pubtools-pyxis-get-repo-metadata - Get metadata of the specified repository in Comet
+* pubtools-pyxis-get-repo-metadata - Get metadata of the specified repository
 * pubtools-pyxis-upload-signatures - Upload new container image signatures to Pyxis
 * pubtools-pyxis-get-signatures - Get existing container image signatures based on the specified criteria
 * pubtools-pyxis-delete-signatures - Delete existing container image signatures with matching internal IDs
