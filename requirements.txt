@@ -1,3 +1,4 @@
 setuptools
+more-executors>=2.3.0
 requests
 requests-kerberos

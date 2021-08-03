@@ -1,10 +1,17 @@
 from __future__ import division
+from concurrent.futures import as_completed
 from functools import partial
 import math
-from requests.exceptions import HTTPError
 import threading
 
+from more_executors import Executors
+from requests.exceptions import HTTPError
+
 from .pyxis_session import PyxisSession
+
+
+THREADS_LIMIT = 8
+"Maximum number of threads to use for parallel requests"
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -36,13 +43,20 @@ class PyxisClient(object):
         """
         self.thread_local = threading.local()
         self._session_factory = partial(
-            PyxisSession, hostname, retries=retries, backoff_factor=backoff_factor, verify=verify
+            PyxisSession,
+            hostname,
+            retries=retries,
+            backoff_factor=backoff_factor,
+            verify=verify,
         )
         self._auth = auth
 
     @property
     def pyxis_session(self):
-        if not hasattr(self.thread_local, 'pyxis_session'):
+        """
+        TODO: docs
+        """
+        if not hasattr(self.thread_local, "pyxis_session"):
             self.thread_local.pyxis_session = self._make_session()
         return self.thread_local.pyxis_session
 
@@ -123,12 +137,22 @@ class PyxisClient(object):
         Returns:
             list: List of uploaded signatures including auto-populated fields.
         """
-        headers = {
-            "Content-Type": "application/json",
-        }
-        resp = self.pyxis_session.post("signatures", data=signatures, headers=headers)
 
-        return self._parse_response(resp)
+        def _send_post_request(data):
+            return self.pyxis_session.post("signatures", json=data)
+
+        return self._do_parallel_requests(_send_post_request, signatures)
+
+    def _do_parallel_requests(self, make_request, data_items):
+        """
+        TODO: docs
+        """
+        with Executors.thread_pool(max_workers=THREADS_LIMIT).with_map(
+            self._parse_response
+        ) as executor:
+            futures = [executor.submit(make_request, data) for data in data_items]
+
+            return [f.result() for f in as_completed(futures)]
 
     def _parse_response(self, response):
         """
