@@ -96,7 +96,11 @@ class PyxisKrbAuth(PyxisAuth):
                 ).wait()
                 os.environ["KRB5CCNAME"] = self.ccache_file
 
-        return HTTPKerberosAuth(mutual_authentication=OPTIONAL)
+        # preemptive auth is forced to speed up parallel requests
+        return HTTPKerberosAuth(
+            mutual_authentication=OPTIONAL,
+            force_preemptive=True,
+        )
 
     def apply_to_session(self, pyxis_session):
         """Set up PyxisSession with Kerberos auth.

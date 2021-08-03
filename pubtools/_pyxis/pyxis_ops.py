@@ -216,7 +216,7 @@ def upload_signatures_main(sysargs=None):
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
-        args = parser.parse_args()  # pragma: no cover"
+        args = parser.parse_args()
 
     signatures_json = serialize_to_json(deserialize_list_from_arg(args.signatures))
 

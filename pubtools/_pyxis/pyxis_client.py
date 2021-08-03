@@ -1,6 +1,9 @@
 from __future__ import division
+from functools import partial
 import math
 from requests.exceptions import HTTPError
+import threading
+
 from .pyxis_session import PyxisSession
 
 
@@ -31,11 +34,23 @@ class PyxisClient(object):
             verify (bool)
                 enable/disable SSL CA verification.
         """
-        self.pyxis_session = PyxisSession(
-            hostname, retries=retries, backoff_factor=backoff_factor, verify=verify
+        self.thread_local = threading.local()
+        self._session_factory = partial(
+            PyxisSession, hostname, retries=retries, backoff_factor=backoff_factor, verify=verify
         )
-        if auth:
-            auth.apply_to_session(self.pyxis_session)
+        self._auth = auth
+
+    @property
+    def pyxis_session(self):
+        if not hasattr(self.thread_local, 'pyxis_session'):
+            self.thread_local.pyxis_session = self._make_session()
+        return self.thread_local.pyxis_session
+
+    def _make_session(self):
+        session = self._session_factory()
+        if self._auth:
+            self._auth.apply_to_session(session)
+        return session
 
     def get_operator_indices(self, ocp_versions_range, organization=None):
         """Get a list of index images satisfying versioning and organization conditions.
