@@ -6,14 +6,13 @@ import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_client, pyxis_authentication
-from tests.utils import load_data
+from tests.utils import load_data, urljoin
 
 # flake8: noqa: W503
 
 
 @mock.patch("pubtools._pyxis.pyxis_client.PyxisSession")
-def test_client_init(mock_session):
-    hostname = "https://pyxis-prod-url/"
+def test_client_init(mock_session, hostname):
 
     pyxis_client.PyxisClient(hostname, 5, None, 3, True)
     mock_session.assert_called_once_with(
@@ -21,8 +20,7 @@ def test_client_init(mock_session):
     )
 
 
-def test_client_init_set_auth():
-    hostname = "https://pyxis-prod-url/"
+def test_client_init_set_auth(hostname):
     crt_path = "/root/name.crt"
     key_path = "/root/name.key"
     auth = pyxis_authentication.PyxisSSLAuth(crt_path, key_path)
@@ -31,8 +29,7 @@ def test_client_init_set_auth():
     my_client.pyxis_session.session.cert == (crt_path, key_path)
 
 
-def test_get_operator_indices():
-    hostname = "https://pyxis-prod-url/"
+def test_get_operator_indices(hostname):
     data = [
         {"path": "registry.io/index-image:4.5", "other": "stuff"},
         {"path": "registry.io/index-image:4.6", "other2": "stuff2"},
@@ -52,8 +49,7 @@ def test_get_operator_indices():
         assert res == data
 
 
-def test_get_repository_metadata():
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata(hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -71,8 +67,7 @@ def test_get_repository_metadata():
         assert res == data
 
 
-def test_get_repository_metadata_partner_registry():
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_partner_registry(hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     internal_registry = "registry.access.redhat.com"
@@ -98,8 +93,7 @@ def test_get_repository_metadata_partner_registry():
         assert res == data
 
 
-def test_get_repository_metadata_only_internal():
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_only_internal(hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -117,8 +111,7 @@ def test_get_repository_metadata_only_internal():
         assert res == data
 
 
-def test_get_repository_metadata_only_partner():
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_only_partner(hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.connect.redhat.com"
@@ -136,8 +129,7 @@ def test_get_repository_metadata_only_partner():
         assert res == data
 
 
-def test_get_repository_metadata_custom_registry():
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_custom_registry(hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "some.registry.com"
@@ -212,19 +204,21 @@ def test_delete_container_signatures_success(hostname):
     ids = ["g1g1g1g1", "h2h2h2h2"]
 
     with requests_mock.Mocker() as m:
-        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1")
-        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+        m.delete(urljoin(hostname, "/v1/signatures/id/g1g1g1g1"))
+        m.delete(urljoin(hostname, "/v1/signatures/id/h2h2h2h2"))
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 2
         assert (
-            m.request_history[0].url
-            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+            m.request_history[0].url == urljoin(
+                hostname, "/v1/signatures/id/g1g1g1g1"
+            )
         )
         assert (
-            m.request_history[1].url
-            == "https://pyxis-prod-url/v1/signatures/id/h2h2h2h2"
+            m.request_history[1].url == urljoin(
+                hostname, "/v1/signatures/id/h2h2h2h2"
+            )
         )
 
 
@@ -232,19 +226,21 @@ def test_delete_container_signatures_tolerate_404(hostname):
     ids = ["g1g1g1g1", "h2h2h2h2"]
 
     with requests_mock.Mocker() as m:
-        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1", status_code=404)
-        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+        m.delete(urljoin(hostname, "/v1/signatures/id/g1g1g1g1"), status_code=404)
+        m.delete(urljoin(hostname, "/v1/signatures/id/h2h2h2h2"))
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 2
         assert (
-            m.request_history[0].url
-            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+            m.request_history[0].url == urljoin(
+                hostname, "/v1/signatures/id/g1g1g1g1"
+            )
         )
         assert (
-            m.request_history[1].url
-            == "https://pyxis-prod-url/v1/signatures/id/h2h2h2h2"
+            m.request_history[1].url == urljoin(
+                hostname, "/v1/signatures/id/h2h2h2h2"
+            )
         )
 
 
@@ -252,14 +248,15 @@ def test_delete_container_signatures_server_error(hostname):
     ids = ["g1g1g1g1", "h2h2h2h2"]
 
     with requests_mock.Mocker() as m:
-        m.delete("https://pyxis-prod-url/v1/signatures/id/g1g1g1g1", status_code=500)
-        m.delete("https://pyxis-prod-url/v1/signatures/id/h2h2h2h2")
+        m.delete(urljoin(hostname, "/v1/signatures/id/g1g1g1g1"), status_code=500)
+        m.delete(urljoin(hostname, "/v1/signatures/id/h2h2h2h2"))
 
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         with pytest.raises(requests.exceptions.HTTPError, match="500 Server Error.*"):
             my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 1
         assert (
-            m.request_history[0].url
-            == "https://pyxis-prod-url/v1/signatures/id/g1g1g1g1"
+            m.request_history[0].url == urljoin(
+                hostname, "/v1/signatures/id/g1g1g1g1"
+            )
         )

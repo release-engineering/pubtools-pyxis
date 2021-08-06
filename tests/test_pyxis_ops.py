@@ -6,7 +6,7 @@ import requests
 import requests_mock
 
 from pubtools._pyxis import pyxis_ops, utils
-from tests.utils import load_data, load_response
+from tests.utils import load_data, load_response, urljoin
 
 
 def test_argument_groups(capsys):
@@ -47,11 +47,11 @@ def test_argument_groups(capsys):
 
 @mock.patch("pubtools._pyxis.pyxis_ops.json.dump")
 @mock.patch("pubtools._pyxis.pyxis_ops.setup_pyxis_client")
-def test_arg_parser_required(mock_client, mock_json):
+def test_arg_parser_required(mock_client, mock_json, hostname):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
     ]
@@ -59,7 +59,7 @@ def test_arg_parser_required(mock_client, mock_json):
     called_args, _ = mock_client.call_args
 
     assert called_args[0].ocp_versions_range == "4.5"
-    assert called_args[0].pyxis_server == "https://pyxis-prod-url/"
+    assert called_args[0].pyxis_server == hostname
     assert called_args[0].organization is None
     assert called_args[0].pyxis_insecure is None
     assert called_args[0].pyxis_krb_ktfile is None
@@ -80,11 +80,11 @@ def test_arg_parser_required_missing_server(mock_client):
 
 
 @mock.patch("pubtools._pyxis.pyxis_ops.setup_pyxis_client")
-def test_arg_parser_required_missing_ocp_versions(mock_client):
+def test_arg_parser_required_missing_ocp_versions(mock_client, hostname):
     missing_ocp_versions = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
     ]
 
     with pytest.raises(SystemExit) as system_error:
@@ -98,11 +98,13 @@ def test_arg_parser_required_missing_ocp_versions(mock_client):
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisClient")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisSSLAuth")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisKrbAuth")
-def test_arg_parser_krb_verification(mock_kerberos, mock_ssl, mock_client, mock_json):
+def test_arg_parser_krb_verification(
+    mock_kerberos, mock_ssl, mock_client, mock_json, hostname
+):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
         "--pyxis-krb-principal",
@@ -118,11 +120,13 @@ def test_arg_parser_krb_verification(mock_kerberos, mock_ssl, mock_client, mock_
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisClient")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisSSLAuth")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisKrbAuth")
-def test_arg_parser_ssl_verification(mock_kerberos, mock_ssl, mock_client, mock_json):
+def test_arg_parser_ssl_verification(
+    mock_kerberos, mock_ssl, mock_client, mock_json, hostname
+):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -141,12 +145,12 @@ def test_arg_parser_ssl_verification(mock_kerberos, mock_ssl, mock_client, mock_
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisSSLAuth")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisKrbAuth")
 def test_arg_parser_both_verifications_krb_used(
-    mock_kerberos, mock_ssl, mock_client, mock_json
+    mock_kerberos, mock_ssl, mock_client, mock_json, hostname
 ):
     good_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -165,11 +169,11 @@ def test_arg_parser_both_verifications_krb_used(
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisClient")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisSSLAuth")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisKrbAuth")
-def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client):
+def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client, hostname):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
     ]
@@ -184,11 +188,11 @@ def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client):
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisClient")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisSSLAuth")
 @mock.patch("pubtools._pyxis.pyxis_ops.PyxisKrbAuth")
-def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
+def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client, hostname):
     bad_args = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-crtfile",
@@ -201,7 +205,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     bad_args2 = [
         "dummy",
         "--pyxis-server",
-        "https://pyxis-prod-url/",
+        hostname,
         "--ocp-versions-range",
         "4.5",
         "--pyxis-ssl-keyfile",
@@ -215,8 +219,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client):
     mock_ssl.assert_not_called()
 
 
-def test_get_operator_indices(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_operator_indices(capsys, hostname):
     images = ["registry.io/index-image:4.5", "registry.io/index-image:4.6"]
     data = [{"path": image, "something": "else"} for image in images]
     ver = "4.5-4.6"
@@ -251,8 +254,7 @@ def test_get_operator_indices(capsys):
     assert out == expected
 
 
-def test_get_repository_metadata_no_restriction(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_no_restriction(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -284,8 +286,7 @@ def test_get_repository_metadata_no_restriction(capsys):
     assert out == expected
 
 
-def test_get_repository_metadata_both_restrictions_specified(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_both_restrictions_specified(capsys, hostname):
     repo_name = "some-repo/name"
 
     args = [
@@ -306,8 +307,7 @@ def test_get_repository_metadata_both_restrictions_specified(capsys):
         pyxis_ops.get_repo_metadata_main(args)
 
 
-def test_get_repository_metadata_no_restriction_partner_registry(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_no_restriction_partner_registry(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     internal_registry = "registry.access.redhat.com"
@@ -347,8 +347,7 @@ def test_get_repository_metadata_no_restriction_partner_registry(capsys):
     assert out == expected
 
 
-def test_get_repository_metadata_only_internal(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_only_internal(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.access.redhat.com"
@@ -381,8 +380,7 @@ def test_get_repository_metadata_only_internal(capsys):
     assert out == expected
 
 
-def test_get_repository_metadata_only_partner(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_only_partner(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "registry.connect.redhat.com"
@@ -415,8 +413,7 @@ def test_get_repository_metadata_only_partner(capsys):
     assert out == expected
 
 
-def test_get_repository_metadata_custom_registry(capsys):
-    hostname = "https://pyxis-prod-url/"
+def test_get_repository_metadata_custom_registry(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
     registry = "some.registry.com"
@@ -450,9 +447,7 @@ def test_get_repository_metadata_custom_registry(capsys):
     assert out == expected
 
 
-def test_upload_signature_json(capsys):
-    hostname = "https://pyxis.remote.host/"
-
+def test_upload_signature_json(capsys, hostname):
     data = load_data("signatures")
     response = load_response("post_signatures_ok")
 

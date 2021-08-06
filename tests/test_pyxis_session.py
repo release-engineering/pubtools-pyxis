@@ -1,11 +1,11 @@
 import mock
 
 from pubtools._pyxis import pyxis_session
+from tests.utils import urljoin
 
 
 @mock.patch("pubtools._pyxis.pyxis_session.requests.Session")
-def test_session_init(mock_session):
-    hostname = "https://pyxis-prod-url/"
+def test_session_init(mock_session, hostname):
     mock_mount = mock.MagicMock()
     mock_session.return_value.mount = mock_mount
 
@@ -25,8 +25,7 @@ def test_api_url():
 
 
 @mock.patch("pubtools._pyxis.pyxis_session.requests.Session")
-def test_rest_methods(mock_session):
-    hostname = "https://pyxis-prod-url/"
+def test_rest_methods(mock_session, hostname):
     mock_get = mock.MagicMock()
     mock_post = mock.MagicMock()
     mock_put = mock.MagicMock()
@@ -43,17 +42,17 @@ def test_rest_methods(mock_session):
     my_session = pyxis_session.PyxisSession(hostname)
     my_session.post("add-item", data={"param2": "value2"})
     mock_post.assert_called_once_with(
-        hostname + "v1/add-item", data={"param2": "value2"}
+        urljoin(hostname, "v1/add-item"), data={"param2": "value2"}
     )
 
     my_session = pyxis_session.PyxisSession(hostname)
     my_session.put("edit-item", data={"param3": "value3"})
     mock_put.assert_called_once_with(
-        hostname + "v1/edit-item", data={"param3": "value3"}
+        urljoin(hostname, "v1/edit-item"), data={"param3": "value3"}
     )
 
     my_session = pyxis_session.PyxisSession(hostname)
     my_session.delete("rm-item", params={"param4": "value4"})
     mock_delete.assert_called_once_with(
-        hostname + "v1/rm-item", params={"param4": "value4"}
+        urljoin(hostname, "v1/rm-item"), params={"param4": "value4"}
     )
