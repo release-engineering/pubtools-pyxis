@@ -168,13 +168,13 @@ class PyxisClient(object):
             list(dict): list of dictionaries extracted from responses.
         """
         with Executors.thread_pool(max_workers=THREADS_LIMIT).with_map(
-            self._parse_response
+            self._handle_json_response
         ) as executor:
             futures = [executor.submit(make_request, data) for data in data_items]
 
             return [f.result() for f in as_completed(futures)]
 
-    def _parse_response(self, response):
+    def _handle_json_response(self, response):
         """
         Get JSON from given response or raise an informative exception.
 

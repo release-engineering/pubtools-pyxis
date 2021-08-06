@@ -216,9 +216,9 @@ def upload_signatures_main(sysargs=None):
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
-        args = parser.parse_args()
+        args = parser.parse_args()  # pragma: no cover
 
-    signatures_json = serialize_to_json(deserialize_list_from_arg(args.signatures))
+    signatures_json = deserialize_list_from_arg(args.signatures)
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
@@ -252,11 +252,6 @@ def deserialize_list_from_arg(value, csv_input=False):
     with open(filename, "r") as f:
         # all file content is returned as list
         return json.load(f)
-
-
-def serialize_to_json(list_value):
-    """Convert any python list to json."""
-    return json.dumps(list_value)
 
 
 def serialize_to_csv_from_list(list_value):
