@@ -54,7 +54,10 @@ class PyxisClient(object):
     @property
     def pyxis_session(self):
         """
-        TODO: docs
+        Return a thread-local session for Pyxis requests.
+
+        If a session did not exist for current thread, it is initialized and
+        cached.
         """
         if not hasattr(self.thread_local, "pyxis_session"):
             self.thread_local.pyxis_session = self._make_session()
@@ -145,7 +148,24 @@ class PyxisClient(object):
 
     def _do_parallel_requests(self, make_request, data_items):
         """
-        TODO: docs
+        Call given function with given data items in parallel, collect responses.
+
+        Args:
+            make_request (function): a function that does the actual request.
+                Must accept a single argument: a data item.
+                Must return a `requests.models.Response` object.
+            data_items (list): a list of arbitrary objects to be passed
+                individually to `make_request()`.
+
+        The number of parallel requests is defined by `THREADS_LIMIT` and of
+        course the number of actually available threads.
+
+        If a response fails consistently (see `PyxisSession` for retry policy),
+        the execution is terminated and an informative error is raised.
+        See `PyxisClient._handle_json_response()` for details.
+
+        Returns:
+            list(dict): list of dictionaries extracted from responses.
         """
         with Executors.thread_pool(max_workers=THREADS_LIMIT).with_map(
             self._parse_response
