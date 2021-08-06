@@ -10,4 +10,4 @@ requests-kerberos==0.11.0
 # do NOT install this under Python 3.x.
 #   Note: this is already in requirements.txt but Py2.6 has a special workflow
 #   in Github.  We just copy the dependency here to avoid touching that code.
-futures; python_version < '2.7'
+futures; python_version < "3"
