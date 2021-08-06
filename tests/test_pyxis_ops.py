@@ -448,8 +448,8 @@ def test_get_repository_metadata_custom_registry(capsys, hostname):
 
 
 def test_upload_signature_json(capsys, hostname):
-    data = load_data("signatures")
-    response = load_response("post_signatures_ok")
+    items_to_upload = load_data("signatures")
+    responses = json.loads(load_response("post_signatures_ok"))
 
     args = [
         "dummy",
@@ -460,29 +460,29 @@ def test_upload_signature_json(capsys, hostname):
         "--pyxis-ssl-keyfile",
         "/root/name.key",
         "--signatures",
-        data,
+        items_to_upload,
     ]
-    expected_out = json.dumps(
-        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
-    )
 
     with requests_mock.Mocker() as m:
-        m.post("{0}v1/signatures".format(hostname), text=response)
+        m.post(
+            urljoin(hostname, "/v1/signatures"),
+            [{"status_code": 200, "json": resp} for resp in responses],
+        )
 
-        pyxis_ops.upload_signatures_main(args)
+        retval = pyxis_ops.upload_signatures_main(args)
 
-        assert m.last_request.json() == json.loads(data)
+        assert len(retval) == len(responses)
+        assert all(ret_item in responses for ret_item in retval)
 
     out, _ = capsys.readouterr()
-    assert out == expected_out
+    assert all(resp["signature_data"] in out for resp in responses)
 
 
 def test_upload_signature_file(capsys):
     hostname = "https://pyxis.remote.host/"
 
     data_file_path = "@tests/data/signatures.json"
-    data = load_data("signatures")
-    response = load_response("post_signatures_ok")
+    responses = json.loads(load_response("post_signatures_ok"))
 
     args = [
         "dummy",
@@ -495,18 +495,20 @@ def test_upload_signature_file(capsys):
         "--signatures",
         data_file_path,
     ]
-    expected_out = json.dumps(
-        json.loads(response), sort_keys=True, indent=4, separators=(",", ": ")
-    )
 
     with requests_mock.Mocker() as m:
-        m.post("{0}v1/signatures".format(hostname), text=response)
+        m.post(
+            urljoin(hostname, "/v1/signatures"),
+            [{"status_code": 200, "json": resp} for resp in responses],
+        )
 
-        pyxis_ops.upload_signatures_main(args)
-        assert m.last_request.json() == json.loads(data.strip())
+        retval = pyxis_ops.upload_signatures_main(args)
+
+        assert len(retval) == len(responses)
+        assert all(ret_item in responses for ret_item in retval)
 
     out, _ = capsys.readouterr()
-    assert out == expected_out
+    assert all(resp["signature_data"] in out for resp in responses)
 
 
 def test_upload_signature_error_server(capsys):

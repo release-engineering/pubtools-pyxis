@@ -3,7 +3,6 @@ import os
 import mock
 
 from pubtools._pyxis import pyxis_authentication, pyxis_session
-from tests.utils import urljoin
 
 
 def test_ssl_authentication(hostname):
