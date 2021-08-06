@@ -5,3 +5,9 @@ cryptography==2.1.4
 urllib3==1.23
 requests==2.18.4
 requests-kerberos==0.11.0
+
+# backport of concurrent.futures for Python 2.x.
+# do NOT install this under Python 3.x.
+#   Note: this is already in requirements.txt but Py2.6 has a special workflow
+#   in Github.  We just copy the dependency here to avoid touching that code.
+futures; python_version < '2.7'
