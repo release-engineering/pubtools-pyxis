@@ -7,11 +7,8 @@ import threading
 from more_executors import Executors
 from requests.exceptions import HTTPError
 
+from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_session import PyxisSession
-
-
-THREADS_LIMIT = 8
-"Maximum number of threads to use for parallel requests"
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -25,6 +22,7 @@ class PyxisClient(object):
         auth=None,
         backoff_factor=2,
         verify=True,
+        threads=DEFAULT_REQUEST_THREADS_LIMIT,
     ):
         """
         Initialize.
@@ -40,6 +38,8 @@ class PyxisClient(object):
                 backoff factor to apply between attempts after the second try.
             verify (bool)
                 enable/disable SSL CA verification.
+            threads (int)
+                the number of threads to use for parallel requests.
         """
         self.thread_local = threading.local()
         self._session_factory = partial(
@@ -50,6 +50,7 @@ class PyxisClient(object):
             verify=verify,
         )
         self._auth = auth
+        self.threads_limit = threads
 
     @property
     def pyxis_session(self):
@@ -157,8 +158,9 @@ class PyxisClient(object):
             data_items (list): a list of arbitrary objects to be passed
                 individually to `make_request()`.
 
-        The number of parallel requests is defined by `THREADS_LIMIT` and of
-        course the number of actually available threads.
+        The number of parallel requests is defined by
+        `DEFAULT_REQUEST_THREADS_LIMIT` (can be overridden by the user) and
+        of course by the number of actually available threads.
 
         If a response fails consistently (see `PyxisSession` for retry policy),
         the execution is terminated and an informative error is raised.
@@ -167,7 +169,7 @@ class PyxisClient(object):
         Returns:
             list(dict): list of dictionaries extracted from responses.
         """
-        with Executors.thread_pool(max_workers=THREADS_LIMIT).with_map(
+        with Executors.thread_pool(max_workers=self.threads_limit).with_map(
             self._handle_json_response
         ) as executor:
             futures = [executor.submit(make_request, data) for data in data_items]

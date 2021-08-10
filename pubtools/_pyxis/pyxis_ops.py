@@ -2,6 +2,7 @@ import json
 import sys
 import tempfile
 
+from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth
 from .pyxis_client import PyxisClient
 from .utils import setup_arg_parser
@@ -81,6 +82,12 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
     " with JSON, e.g. --signatures=@/tmp/filename.json",
     "required": True,
     "type": str,
+}
+UPLOAD_SIGNATURES_ARGS[("--request-threads",)] = {
+    "help": "Maximum number of threads to use for parallel requests",
+    "required": False,
+    "default": DEFAULT_REQUEST_THREADS_LIMIT,
+    "type": int,
 }
 
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
