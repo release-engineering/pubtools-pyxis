@@ -178,11 +178,11 @@
 <p>Class for performing actual Pyxis queries and handling related logic.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pubtools._pyxis.pyxis_client.PyxisClient">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pubtools._pyxis.pyxis_client.</span></span><span class="sig-name descname"><span class="pre">PyxisClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backoff_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pubtools._pyxis.pyxis_client.</span></span><span class="sig-name descname"><span class="pre">PyxisClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backoff_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pyxis requests wrapper.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pubtools._pyxis.pyxis_client.PyxisClient.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backoff_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backoff_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -195,6 +195,8 @@
 <dt>backoff_factor (int)</dt><dd><p>backoff factor to apply between attempts after the second try.</p>
 </dd>
 <dt>verify (bool)</dt><dd><p>enable/disable SSL CA verification.</p>
+</dd>
+<dt>threads (int)</dt><dd><p>the number of threads to use for parallel requests.</p>
 </dd>
 </dl>
 </dd>
@@ -257,8 +259,34 @@ the internal registry.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pubtools._pyxis.pyxis_client.PyxisClient._parse_response">
-<span class="sig-name descname"><span class="pre">_parse_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient._parse_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient._parse_response" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pubtools._pyxis.pyxis_client.PyxisClient._do_parallel_requests">
+<span class="sig-name descname"><span class="pre">_do_parallel_requests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">make_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_items</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient._do_parallel_requests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient._do_parallel_requests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call given function with given data items in parallel, collect responses.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>make_request (function): a function that does the actual request.</dt><dd><p>Must accept a single argument: a data item.
+Must return a <cite>requests.models.Response</cite> object.</p>
+</dd>
+<dt>data_items (list): a list of arbitrary objects to be passed</dt><dd><p>individually to <cite>make_request()</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>The number of parallel requests is defined by
+<cite>DEFAULT_REQUEST_THREADS_LIMIT</cite> (can be overridden by the user) and
+of course by the number of actually available threads.</p>
+<p>If a response fails consistently (see <cite>PyxisSession</cite> for retry policy),
+the execution is terminated and an informative error is raised.
+See <cite>PyxisClient._handle_json_response()</cite> for details.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list(dict): list of dictionaries extracted from responses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pubtools._pyxis.pyxis_client.PyxisClient._handle_json_response">
+<span class="sig-name descname"><span class="pre">_handle_json_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pubtools/_pyxis/pyxis_client.html#PyxisClient._handle_json_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pubtools._pyxis.pyxis_client.PyxisClient._handle_json_response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get JSON from given response or raise an informative exception.</p>
 <p>Uses <cite>requests.raise_for_status()</cite> but tries to extract more details.</p>
 </dd></dl>

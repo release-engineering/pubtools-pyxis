@@ -260,7 +260,11 @@
                 <span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;KRB5CCNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ccache_file</span>
 
-        <span class="k">return</span> <span class="n">HTTPKerberosAuth</span><span class="p">(</span><span class="n">mutual_authentication</span><span class="o">=</span><span class="n">OPTIONAL</span><span class="p">)</span></div>
+        <span class="c1"># preemptive auth is forced to speed up parallel requests</span>
+        <span class="k">return</span> <span class="n">HTTPKerberosAuth</span><span class="p">(</span>
+            <span class="n">mutual_authentication</span><span class="o">=</span><span class="n">OPTIONAL</span><span class="p">,</span>
+            <span class="n">force_preemptive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyxisKrbAuth.apply_to_session"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisKrbAuth.apply_to_session">[docs]</a>    <span class="k">def</span> <span class="nf">apply_to_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyxis_session</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up PyxisSession with Kerberos auth.</span>
