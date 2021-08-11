@@ -1,6 +1,13 @@
 from __future__ import division
+from concurrent.futures import as_completed
+from functools import partial
 import math
+import threading
+
+from more_executors import Executors
 from requests.exceptions import HTTPError
+
+from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_session import PyxisSession
 
 
@@ -15,6 +22,7 @@ class PyxisClient(object):
         auth=None,
         backoff_factor=2,
         verify=True,
+        threads=DEFAULT_REQUEST_THREADS_LIMIT,
     ):
         """
         Initialize.
@@ -30,12 +38,37 @@ class PyxisClient(object):
                 backoff factor to apply between attempts after the second try.
             verify (bool)
                 enable/disable SSL CA verification.
+            threads (int)
+                the number of threads to use for parallel requests.
         """
-        self.pyxis_session = PyxisSession(
-            hostname, retries=retries, backoff_factor=backoff_factor, verify=verify
+        self.thread_local = threading.local()
+        self._session_factory = partial(
+            PyxisSession,
+            hostname,
+            retries=retries,
+            backoff_factor=backoff_factor,
+            verify=verify,
         )
-        if auth:
-            auth.apply_to_session(self.pyxis_session)
+        self._auth = auth
+        self.threads_limit = threads
+
+    @property
+    def pyxis_session(self):
+        """
+        Return a thread-local session for Pyxis requests.
+
+        If a session did not exist for current thread, it is initialized and
+        cached.
+        """
+        if not hasattr(self.thread_local, "pyxis_session"):
+            self.thread_local.pyxis_session = self._make_session()
+        return self.thread_local.pyxis_session
+
+    def _make_session(self):
+        session = self._session_factory()
+        if self._auth:
+            self._auth.apply_to_session(session)
+        return session
 
     def get_operator_indices(self, ocp_versions_range, organization=None):
         """Get a list of index images satisfying versioning and organization conditions.
@@ -108,14 +141,42 @@ class PyxisClient(object):
         Returns:
             list: List of uploaded signatures including auto-populated fields.
         """
-        headers = {
-            "Content-Type": "application/json",
-        }
-        resp = self.pyxis_session.post("signatures", data=signatures, headers=headers)
 
-        return self._parse_response(resp)
+        def _send_post_request(data):
+            return self.pyxis_session.post("signatures", json=data)
 
-    def _parse_response(self, response):
+        return self._do_parallel_requests(_send_post_request, signatures)
+
+    def _do_parallel_requests(self, make_request, data_items):
+        """
+        Call given function with given data items in parallel, collect responses.
+
+        Args:
+            make_request (function): a function that does the actual request.
+                Must accept a single argument: a data item.
+                Must return a `requests.models.Response` object.
+            data_items (list): a list of arbitrary objects to be passed
+                individually to `make_request()`.
+
+        The number of parallel requests is defined by
+        `DEFAULT_REQUEST_THREADS_LIMIT` (can be overridden by the user) and
+        of course by the number of actually available threads.
+
+        If a response fails consistently (see `PyxisSession` for retry policy),
+        the execution is terminated and an informative error is raised.
+        See `PyxisClient._handle_json_response()` for details.
+
+        Returns:
+            list(dict): list of dictionaries extracted from responses.
+        """
+        with Executors.thread_pool(max_workers=self.threads_limit).with_map(
+            self._handle_json_response
+        ) as executor:
+            futures = [executor.submit(make_request, data) for data in data_items]
+
+            return [f.result() for f in as_completed(futures)]
+
+    def _handle_json_response(self, response):
         """
         Get JSON from given response or raise an informative exception.
 

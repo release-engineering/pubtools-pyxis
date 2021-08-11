@@ -2,6 +2,7 @@ import json
 import sys
 import tempfile
 
+from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth
 from .pyxis_client import PyxisClient
 from .utils import setup_arg_parser
@@ -81,6 +82,12 @@ UPLOAD_SIGNATURES_ARGS[("--signatures",)] = {
     " with JSON, e.g. --signatures=@/tmp/filename.json",
     "required": True,
     "type": str,
+}
+UPLOAD_SIGNATURES_ARGS[("--request-threads",)] = {
+    "help": "Maximum number of threads to use for parallel requests",
+    "required": False,
+    "default": DEFAULT_REQUEST_THREADS_LIMIT,
+    "type": int,
 }
 
 GET_SIGNATURES_ARGS = CMD_ARGS.copy()
@@ -216,9 +223,9 @@ def upload_signatures_main(sysargs=None):
     if sysargs:
         args = parser.parse_args(sysargs[1:])
     else:
-        args = parser.parse_args()  # pragma: no cover"
+        args = parser.parse_args()  # pragma: no cover
 
-    signatures_json = serialize_to_json(deserialize_list_from_arg(args.signatures))
+    signatures_json = deserialize_list_from_arg(args.signatures)
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
@@ -252,11 +259,6 @@ def deserialize_list_from_arg(value, csv_input=False):
     with open(filename, "r") as f:
         # all file content is returned as list
         return json.load(f)
-
-
-def serialize_to_json(list_value):
-    """Convert any python list to json."""
-    return json.dumps(list_value)
 
 
 def serialize_to_csv_from_list(list_value):

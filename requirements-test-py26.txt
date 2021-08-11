@@ -5,3 +5,8 @@ cryptography==2.1.4
 urllib3==1.23
 requests==2.18.4
 requests-kerberos==0.11.0
+more-executors>=2.3.0
+
+# backport of concurrent.futures for Python 2.x.
+# do NOT install this under Python 3.x.
+futures; python_version < "3"
