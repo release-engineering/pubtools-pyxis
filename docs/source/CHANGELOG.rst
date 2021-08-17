@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+1.3.0 (2021-08-18)
+------------------
+
+* Added documentation
+* Added support for parallel uploading of signatures
+
 1.2.0 (2021-06-10)
 ------------------
 
