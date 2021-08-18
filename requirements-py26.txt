@@ -1,0 +1,9 @@
+# same as requirements.txt
+# (not using -r because this will be used in setup.py)
+setuptools
+more-executors>=2.3.0
+requests
+requests-kerberos
+
+# backport of concurrent.futures for Python 2.x.
+futures

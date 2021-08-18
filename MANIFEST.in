@@ -3,4 +3,4 @@ include README.rst
 include LICENSE
 recursive-include docs *.rst conf.py Makefile
 recursive-include pubtools_pyxis *.py
-include requirements.txt
+include requirements*.txt
