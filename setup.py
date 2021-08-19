@@ -3,6 +3,7 @@
 """setup.py"""
 
 import os
+import sys
 
 # import pkg_resources
 import sys
@@ -52,7 +53,12 @@ classifiers = [
 
 
 def get_requirements():
-    with open("requirements.txt") as f:
+    if sys.version_info[0] == 2:
+        filename = "requirements-py26.txt"
+    else:
+        filename = "requirements.txt"
+
+    with open(filename) as f:
         return f.read().splitlines()
 
 
