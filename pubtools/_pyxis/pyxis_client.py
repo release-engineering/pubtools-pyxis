@@ -18,9 +18,9 @@ class PyxisClient(object):
     def __init__(
         self,
         hostname,
-        retries=3,
+        retries=5,
         auth=None,
-        backoff_factor=2,
+        backoff_factor=5,
         verify=True,
         threads=DEFAULT_REQUEST_THREADS_LIMIT,
     ):
@@ -143,9 +143,22 @@ class PyxisClient(object):
         """
 
         def _send_post_request(data):
-            return self.pyxis_session.post("signatures", json=data)
+            response = self.pyxis_session.post("signatures", json=data)
+            # SEE CLOUDDST-9698
+            # Pyxis returns 500 error due to a potential sidecar config issue
+            # As a workaround to that, it was suggested to clear the session
+            # establish a new connection and again retry
+            # After creating a new session and retrying, the request should succeed
+            if response.status_code == 500:
+                self._clear_session()
+                response = self.pyxis_session.post("signatures", json=data)
+            return response
 
         return self._do_parallel_requests(_send_post_request, signatures)
+
+    def _clear_session(self):
+        self.thread_local.pyxis_session.close()
+        delattr(self.thread_local, "pyxis_session")
 
     def _do_parallel_requests(self, make_request, data_items):
         """

@@ -278,3 +278,20 @@ def test_do_parallel_requests(hostname):
 
     # verify that the mock requester was called as expected (in parallel)
     _do_request.assert_has_calls([mock.call("a"), mock.call("b")], any_order=True)
+
+
+@mock.patch("pubtools._pyxis.pyxis_session.PyxisSession.post")
+def test_post_signatures_500_retry(mock_session_post, hostname):
+    sig_data = [
+        {"foo": "bar", "foo1": "bar1"},
+    ]
+    response_500 = mock.MagicMock()
+    response_200 = mock.MagicMock()
+    response_500.status_code = 500
+    response_200.status_code = 200
+    response_200.json.return_value = sig_data[0]
+    mock_session_post.side_effect = [response_500, response_200]
+    my_client = pyxis_client.PyxisClient(hostname, 5, None, 5, True, 1)
+    res = my_client.upload_signatures(sig_data)
+    assert mock_session_post.call_count == 2
+    assert res == sig_data
