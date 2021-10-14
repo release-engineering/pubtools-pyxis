@@ -7,7 +7,7 @@ from requests.packages.urllib3.util.retry import Retry
 class PyxisSession(object):
     """Helper class to support Pyxis requests and authentication."""
 
-    def __init__(self, hostname, retries=3, backoff_factor=2, verify=False):
+    def __init__(self, hostname, retries=5, backoff_factor=5, verify=False):
         """
         Initialize.
 
@@ -26,12 +26,22 @@ class PyxisSession(object):
         self.session.verify = verify
         self.krb5ccname_path = None
 
+        status_forcelist = list(range(500, 512)) + [429]
         retry = Retry(
             total=retries,
             read=retries,
             connect=retries,
             backoff_factor=backoff_factor,
-            status_forcelist=set(range(500, 512)),
+            status_forcelist=status_forcelist,
+            method_whitelist=[
+                "HEAD",
+                "GET",
+                "PUT",
+                "DELETE",
+                "OPTIONS",
+                "TRACE",
+                "POST",
+            ],
         )
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("http://", adapter)
@@ -99,3 +109,7 @@ class PyxisSession(object):
             return "https://%s/v1/%s" % (self.hostname.rstrip("/"), endpoint)
         else:
             return "%s/v1/%s" % (self.hostname.rstrip("/"), endpoint)
+
+    def close(self):
+        """Close the current session."""
+        self.session.close()
