@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -85,12 +86,12 @@
            <div itemprop="articleBody">
              
   <section id="module-pubtools._pyxis.pyxis_authentication">
-<span id="pyxis-authentication"></span><h1>Pyxis Authentication<a class="headerlink" href="#module-pubtools._pyxis.pyxis_authentication" title="Permalink to this headline"></a></h1>
+<span id="pyxis-authentication"></span><h1>Pyxis Authentication<a class="headerlink" href="#module-pubtools._pyxis.pyxis_authentication" title="Permalink to this heading"></a></h1>
 <p>Classes used for authenticating with Pyxis. Each class performs a different authentication type. Inheritence of the base class, PyxisAuth is used to ensure that the required methods have been implemented.</p>
 <p>The method ‘apply_to_session’ applies the authentication to the Session object. It should generally be the only method that needs to be used.</p>
 <p>Currently, two authentication types are supported: Kerberos and SSL.</p>
 <section id="base-class-signature">
-<h2>Base class signature<a class="headerlink" href="#base-class-signature" title="Permalink to this headline"></a></h2>
+<h2>Base class signature<a class="headerlink" href="#base-class-signature" title="Permalink to this heading"></a></h2>
 <p>The base class dictates which methods must be implemented in the children classes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pubtools._pyxis.pyxis_authentication.PyxisAuth">
@@ -112,7 +113,7 @@
 
 </section>
 <section id="children-classes">
-<h2>Children classes<a class="headerlink" href="#children-classes" title="Permalink to this headline"></a></h2>
+<h2>Children classes<a class="headerlink" href="#children-classes" title="Permalink to this heading"></a></h2>
 <p>These classes perform the actual authentication. More may be added if different authentication type is required.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pubtools._pyxis.pyxis_authentication.PyxisSSLAuth">

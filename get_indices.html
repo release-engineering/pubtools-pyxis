@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -89,10 +90,10 @@
            <div itemprop="articleBody">
              
   <section id="module-pubtools._pyxis.pyxis_ops">
-<span id="get-operator-indices"></span><h1>Get operator indices<a class="headerlink" href="#module-pubtools._pyxis.pyxis_ops" title="Permalink to this headline"></a></h1>
+<span id="get-operator-indices"></span><h1>Get operator indices<a class="headerlink" href="#module-pubtools._pyxis.pyxis_ops" title="Permalink to this heading"></a></h1>
 <p>Get a list of index images satisfying the specified conditions</p>
 <section id="cli-reference">
-<h2>CLI reference<a class="headerlink" href="#cli-reference" title="Permalink to this headline"></a></h2>
+<h2>CLI reference<a class="headerlink" href="#cli-reference" title="Permalink to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pubtools</span><span class="o">-</span><span class="n">pyxis</span><span class="o">-</span><span class="n">get</span><span class="o">-</span><span class="n">operator</span><span class="o">-</span><span class="n">indices</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">server</span> <span class="n">PYXIS_SERVER</span>
                                            <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">insecure</span><span class="p">]</span>
                                            <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">krb</span><span class="o">-</span><span class="n">principal</span> <span class="n">PYXIS_KRB_PRINCIPAL</span><span class="p">]</span>
@@ -105,7 +106,7 @@
 </pre></div>
 </div>
 <section id="Named Arguments">
-<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline"></a></h3>
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading"></a></h3>
 <dl class="option-list">
 <dt><kbd>--pyxis-server</kbd></dt>
 <dd><p>Pyxis service hostname</p>
@@ -135,7 +136,7 @@
 </section>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <p>Get operator indices with one specified version and default Kerberos authentication.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pubtools</span><span class="o">-</span><span class="n">pyxis</span><span class="o">-</span><span class="n">get</span><span class="o">-</span><span class="n">operator</span><span class="o">-</span><span class="n">indices</span> \
 <span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">server</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pyxis</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">url</span><span class="o">/</span> \

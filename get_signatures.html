@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -89,11 +90,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pubtools._pyxis.pyxis_ops">
-<span id="get-container-image-signatures"></span><h1>Get container image signatures<a class="headerlink" href="#module-pubtools._pyxis.pyxis_ops" title="Permalink to this headline"></a></h1>
+<span id="get-container-image-signatures"></span><h1>Get container image signatures<a class="headerlink" href="#module-pubtools._pyxis.pyxis_ops" title="Permalink to this heading"></a></h1>
 <p>Get existing container image signatures from Pyxis. The signatures matching specified criteria will be fetched.</p>
 <p>The desired signatures can be filtered based on two criteria: manifest digest and image reference. Multiple values of each criterion can be specified as CSV. Both criteria may be used simultaneously, and an “OR” operator will be used between them (signatures matching either criterion will be returned).</p>
 <section id="cli-reference">
-<h2>CLI reference<a class="headerlink" href="#cli-reference" title="Permalink to this headline"></a></h2>
+<h2>CLI reference<a class="headerlink" href="#cli-reference" title="Permalink to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pubtools</span><span class="o">-</span><span class="n">pyxis</span><span class="o">-</span><span class="n">get</span><span class="o">-</span><span class="n">signatures</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">server</span> <span class="n">PYXIS_SERVER</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">insecure</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">krb</span><span class="o">-</span><span class="n">principal</span> <span class="n">PYXIS_KRB_PRINCIPAL</span><span class="p">]</span>
@@ -105,7 +106,7 @@
 </pre></div>
 </div>
 <section id="Named Arguments">
-<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline"></a></h3>
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading"></a></h3>
 <dl class="option-list">
 <dt><kbd>--pyxis-server</kbd></dt>
 <dd><p>Pyxis service hostname</p>
@@ -135,7 +136,7 @@
 </section>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <p>NOTE: The demonstration of various authentication types can be seen in “Get operator indices” entrypoint examples.</p>
 <p>Get signatures matching the specified manifest digests:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pubtools</span><span class="o">-</span><span class="n">pyxis</span><span class="o">-</span><span class="n">get</span><span class="o">-</span><span class="n">signatures</span> \
