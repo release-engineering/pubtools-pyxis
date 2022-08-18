@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import mock
 
@@ -36,32 +37,33 @@ def test_krb_auth_use_keytab(mock_popen, hostname):
     service = hostname
     ktfile = "/root/file.keytab"
 
-    krb_auth = pyxis_authentication.PyxisKrbAuth(
-        krb_princ, service, ktfile, "/tmp/tempfile"
-    )
-    mock_wait = mock.MagicMock()
-    mock_wait.side_effect = [0, 0, 0]
-    mock_popen.return_value.wait = mock_wait
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        krb_auth = pyxis_authentication.PyxisKrbAuth(
+            krb_princ, service, ktfile, tmpfile.name
+        )
+        mock_wait = mock.MagicMock()
+        mock_wait.side_effect = [0, 0, 0]
+        mock_popen.return_value.wait = mock_wait
 
-    krb_auth._krb_auth()
-    assert mock_popen.call_count == 2
-    assert mock_popen.call_args_list == [
-        mock.call(["klist", "-s"], stdout=-1, stderr=-1),
-        mock.call(
-            [
-                "kinit",
-                "name@REDHAT.COM",
-                "-k",
-                "-t",
-                "/root/file.keytab",
-                "-c",
-                "/tmp/tempfile",
-            ],
-            stdout=-1,
-            stderr=-1,
-        ),
-    ]
-    assert os.environ["KRB5CCNAME"] == "/tmp/tempfile"
+        krb_auth._krb_auth()
+        assert mock_popen.call_count == 2
+        assert mock_popen.call_args_list == [
+            mock.call(["klist", "-s"], stdout=-1, stderr=-1),
+            mock.call(
+                [
+                    "kinit",
+                    "name@REDHAT.COM",
+                    "-k",
+                    "-t",
+                    "/root/file.keytab",
+                    "-c",
+                    tmpfile.name,
+                ],
+                stdout=-1,
+                stderr=-1,
+            ),
+        ]
+        assert os.environ["KRB5CCNAME"] == tmpfile.name
 
 
 @mock.patch.dict("os.environ", {"something": "here"})
@@ -70,24 +72,25 @@ def test_krb_auth_use_default_keytab(mock_popen, hostname):
     krb_princ = "name@REDHAT.COM"
     service = hostname
 
-    krb_auth = pyxis_authentication.PyxisKrbAuth(
-        krb_princ, service, ccache_file="/tmp/tempfile"
-    )
-    mock_wait = mock.MagicMock()
-    mock_wait.side_effect = [1, 0, 0]
-    mock_popen.return_value.wait = mock_wait
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        krb_auth = pyxis_authentication.PyxisKrbAuth(
+            krb_princ, service, ccache_file=tmpfile.name
+        )
+        mock_wait = mock.MagicMock()
+        mock_wait.side_effect = [1, 0, 0]
+        mock_popen.return_value.wait = mock_wait
 
-    krb_auth._krb_auth()
-    assert mock_popen.call_count == 2
-    assert mock_popen.call_args_list == [
-        mock.call(["klist", "-s"], stdout=-1, stderr=-1),
-        mock.call(
-            ["kinit", "name@REDHAT.COM", "-k", "-c", "/tmp/tempfile"],
-            stdout=-1,
-            stderr=-1,
-        ),
-    ]
-    assert os.environ["KRB5CCNAME"] == "/tmp/tempfile"
+        krb_auth._krb_auth()
+        assert mock_popen.call_count == 2
+        assert mock_popen.call_args_list == [
+            mock.call(["klist", "-s"], stdout=-1, stderr=-1),
+            mock.call(
+                ["kinit", "name@REDHAT.COM", "-k", "-c", tmpfile.name],
+                stdout=-1,
+                stderr=-1,
+            ),
+        ]
+        assert os.environ["KRB5CCNAME"] == tmpfile.name
 
 
 @mock.patch.dict("os.environ", {"something": "here"})
