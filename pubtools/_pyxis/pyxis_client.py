@@ -202,6 +202,10 @@ class PyxisClient(object):
         except ValueError:  # Python 2.x compat
             data = {}
 
+        # Uploaded data already exists in Pyxis
+        if response.status_code == 409:
+            return data
+
         try:
             response.raise_for_status()
         except HTTPError as e:

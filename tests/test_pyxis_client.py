@@ -295,3 +295,24 @@ def test_post_signatures_500_retry(mock_session_post, hostname):
     res = my_client.upload_signatures(sig_data)
     assert mock_session_post.call_count == 2
     assert res == sig_data
+
+
+@mock.patch("pubtools._pyxis.pyxis_session.PyxisSession.post")
+def test_post_signatures_tolerate_409(mock_session_post, hostname):
+    sig_data = [
+        {"foo": "bar", "foo1": "bar1"},
+        {"foo": "bar2", "foo1": "bar3"},
+    ]
+    response_200 = mock.MagicMock()
+    response_409 = mock.MagicMock()
+    response_200.status_code = 200
+    response_409.status_code = 409
+    response_200.json.return_value = sig_data[0]
+    return_data = {"details": "E11000 duplicate key error"}
+    response_409.json.return_value = return_data
+    mock_session_post.side_effect = [response_200, response_409]
+    my_client = pyxis_client.PyxisClient(hostname, 5, None, 5, True, 1)
+    res = my_client.upload_signatures(sig_data)
+    assert mock_session_post.call_count == 2
+    assert len(res) == 2
+    assert sig_data[0] in res and return_data in res
