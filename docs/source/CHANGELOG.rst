@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+1.3.3 (2022-11-09)
+------------------
+
+* Tolerate 409 of signature upload
+* Add Bandit checks and resolve Bandit findings
+
 1.3.2 (2021-10-15)
 ------------------
 
