@@ -44,7 +44,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: Implementation :: CPython",
@@ -53,10 +52,7 @@ classifiers = [
 
 
 def get_requirements():
-    if sys.version_info[0] == 2:
-        filename = "requirements-py26.txt"
-    else:
-        filename = "requirements.txt"
+    filename = "requirements.txt"
 
     with open(filename) as f:
         return f.read().splitlines()
@@ -83,6 +79,7 @@ setup(
     author_email="lgallovi@redhat.com",
     url="https://github.com/release-engineering/pubtools-pyxis",
     classifiers=classifiers,
+    python_requires='>=3.6',
     packages=find_packages(exclude=["tests"]),
     data_files=[],
     install_requires=get_requirements(),
