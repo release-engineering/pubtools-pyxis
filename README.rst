@@ -8,7 +8,6 @@ Set of scripts used for operating with Pyxis service.
 Requirements
 ============
 
-* Python 2.7+
 * Python 3.7+
 
 Features
