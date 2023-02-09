@@ -26,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pubtools-pyxis
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pubtools-pyxis
           </a>
               <div class="version">
                 1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,7 +65,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pubtools._pyxis.pyxis_authentication</li>
       <li class="wy-breadcrumbs-aside">
@@ -80,23 +84,23 @@
 
 
 <div class="viewcode-block" id="PyxisAuth"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisAuth">[docs]</a><span class="k">class</span> <span class="nc">PyxisAuth</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base Auth class.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Auth class.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PyxisAuth.__init__"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisAuth.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># pragma: no cover&quot;</span></div>
 
 <div class="viewcode-block" id="PyxisAuth.apply_to_session"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisAuth.apply_to_session">[docs]</a>    <span class="k">def</span> <span class="nf">apply_to_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyxis_session</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set up initialization in the Pyxis session.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up initialization in the Pyxis session.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># pragma: no cover&quot;</span></div></div>
 
 
 <div class="viewcode-block" id="PyxisSSLAuth"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisSSLAuth">[docs]</a><span class="k">class</span> <span class="nc">PyxisSSLAuth</span><span class="p">(</span><span class="n">PyxisAuth</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;SSL Auth provider to PyxisClient.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SSL Auth provider to PyxisClient.&quot;&quot;&quot;</span>
 
     <span class="c1"># pylint: disable=super-init-not-called</span>
 <div class="viewcode-block" id="PyxisSSLAuth.__init__"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisSSLAuth.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">crt_path</span><span class="p">,</span> <span class="n">key_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize.</span>
 
 <span class="sd">        Args:</span>
@@ -109,7 +113,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">key_path</span> <span class="o">=</span> <span class="n">key_path</span></div>
 
 <div class="viewcode-block" id="PyxisSSLAuth.apply_to_session"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisSSLAuth.apply_to_session">[docs]</a>    <span class="k">def</span> <span class="nf">apply_to_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyxis_session</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set up PyxisSession with SSL auth.</span>
 
 <span class="sd">        Args:</span>
@@ -120,10 +124,10 @@
 
 
 <div class="viewcode-block" id="PyxisKrbAuth"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisKrbAuth">[docs]</a><span class="k">class</span> <span class="nc">PyxisKrbAuth</span><span class="p">(</span><span class="n">PyxisAuth</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Kerberos authentication support for PyxisClient.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kerberos authentication support for PyxisClient.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PyxisKrbAuth.__init__"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisKrbAuth.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">krb_princ</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">ktfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ccache_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize.</span>
 
 <span class="sd">        Args:</span>
@@ -178,7 +182,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyxisKrbAuth.apply_to_session"><a class="viewcode-back" href="../../../pyxis_authentication.html#pubtools._pyxis.pyxis_authentication.PyxisKrbAuth.apply_to_session">[docs]</a>    <span class="k">def</span> <span class="nf">apply_to_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyxis_session</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set up PyxisSession with Kerberos auth.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up PyxisSession with Kerberos auth.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pyxis_session (PyxisSession)</span>

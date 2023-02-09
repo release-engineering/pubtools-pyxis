@@ -26,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pubtools-pyxis
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pubtools-pyxis
           </a>
               <div class="version">
                 1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,7 +65,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pubtools._pyxis.pyxis_ops</li>
       <li class="wy-breadcrumbs-aside">
@@ -186,7 +190,7 @@
 
 
 <div class="viewcode-block" id="setup_pyxis_client"><a class="viewcode-back" href="../../../ops_helpers.html#pubtools._pyxis.pyxis_ops.setup_pyxis_client">[docs]</a><span class="k">def</span> <span class="nf">setup_pyxis_client</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">ccache_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set up a PyxisClient instance according to specified parameters.</span>
 
 <span class="sd">    Args:</span>
@@ -218,12 +222,12 @@
 
 
 <span class="k">def</span> <span class="nf">set_get_operator_indices_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">setup_arg_parser</span><span class="p">(</span><span class="n">GET_OPERATORS_INDICES_ARGS</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_operator_indices_main</span><span class="p">(</span><span class="n">sysargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Entrypoint for getting operator indices.</span>
 
 <span class="sd">    Returns:</span>
@@ -246,12 +250,12 @@
 
 
 <span class="k">def</span> <span class="nf">set_get_repo_metadata_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">setup_arg_parser</span><span class="p">(</span><span class="n">GET_REPO_METADATA_ARGS</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_repo_metadata_main</span><span class="p">(</span><span class="n">sysargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Entrypoint for getting repository metadata.</span>
 
 <span class="sd">    Returns:</span>
@@ -283,12 +287,12 @@
 
 
 <span class="k">def</span> <span class="nf">set_upload_signatures_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">setup_arg_parser</span><span class="p">(</span><span class="n">UPLOAD_SIGNATURES_ARGS</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">upload_signatures_main</span><span class="p">(</span><span class="n">sysargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Entrypoint for uploading signatures from JSON or a file.</span>
 
 <span class="sd">    Returns:</span>
@@ -312,7 +316,7 @@
 
 
 <div class="viewcode-block" id="deserialize_list_from_arg"><a class="viewcode-back" href="../../../ops_helpers.html#pubtools._pyxis.pyxis_ops.deserialize_list_from_arg">[docs]</a><span class="k">def</span> <span class="nf">deserialize_list_from_arg</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">csv_input</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Conditionally load contents of a file if specified in argument value.</span>
 
 <span class="sd">    Detects whether the value is a reference to a file (@-prefixed like in</span>
@@ -337,17 +341,17 @@
 
 
 <div class="viewcode-block" id="serialize_to_csv_from_list"><a class="viewcode-back" href="../../../ops_helpers.html#pubtools._pyxis.pyxis_ops.serialize_to_csv_from_list">[docs]</a><span class="k">def</span> <span class="nf">serialize_to_csv_from_list</span><span class="p">(</span><span class="n">list_value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convert a list to comma separated string.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a list to comma separated string.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">list_value</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">set_get_signatures_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">setup_arg_parser</span><span class="p">(</span><span class="n">GET_SIGNATURES_ARGS</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_signatures_main</span><span class="p">(</span><span class="n">sysargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Entrypoint for getting container signature metadata.</span>
 
 <span class="sd">    Returns:</span>
@@ -382,12 +386,12 @@
 
 
 <span class="k">def</span> <span class="nf">set_delete_signatures_args</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up argparser without extra parameters, this method is used for auto doc generation.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">setup_arg_parser</span><span class="p">(</span><span class="n">DELETE_SIGNATURES_ARGS</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">delete_signatures_main</span><span class="p">(</span><span class="n">sysargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Entrypoint for removing existing signatures.</span>
 
 <span class="sd">    Returns:</span>

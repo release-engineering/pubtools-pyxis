@@ -26,14 +26,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pubtools-pyxis
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pubtools-pyxis
           </a>
               <div class="version">
                 1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -61,7 +65,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">pubtools._pyxis.pyxis_client</li>
       <li class="wy-breadcrumbs-aside">
@@ -88,7 +92,7 @@
 
 <span class="c1"># pylint: disable=bad-option-value,useless-object-inheritance</span>
 <div class="viewcode-block" id="PyxisClient"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient">[docs]</a><span class="k">class</span> <span class="nc">PyxisClient</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pyxis requests wrapper.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pyxis requests wrapper.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PyxisClient.__init__"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -99,7 +103,7 @@
         <span class="n">verify</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">threads</span><span class="o">=</span><span class="n">DEFAULT_REQUEST_THREADS_LIMIT</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize.</span>
 
 <span class="sd">        Args:</span>
@@ -129,7 +133,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pyxis_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a thread-local session for Pyxis requests.</span>
 
 <span class="sd">        If a session did not exist for current thread, it is initialized and</span>
@@ -146,7 +150,7 @@
         <span class="k">return</span> <span class="n">session</span>
 
 <div class="viewcode-block" id="PyxisClient.get_operator_indices"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.get_operator_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_operator_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ocp_versions_range</span><span class="p">,</span> <span class="n">organization</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of index images satisfying versioning and organization conditions.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of index images satisfying versioning and organization conditions.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            ocp_versions_range (str)</span>
@@ -168,7 +172,7 @@
 <div class="viewcode-block" id="PyxisClient.get_repository_metadata"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.get_repository_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_repository_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">repo_name</span><span class="p">,</span> <span class="n">custom_registry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">only_internal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">only_partner</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get metadata of a Comet repository.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get metadata of a Comet repository.</span>
 
 <span class="sd">        If checking only one registry hasn&#39;t been specified, check both with precedence on</span>
 <span class="sd">        the internal registry.</span>
@@ -206,7 +210,7 @@
         <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="PyxisClient.upload_signatures"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.upload_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">upload_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signatures</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Upload signatures from given JSON string.</span>
 
 <span class="sd">        Args:</span>
@@ -236,7 +240,7 @@
         <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thread_local</span><span class="p">,</span> <span class="s2">&quot;pyxis_session&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PyxisClient._do_parallel_requests"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient._do_parallel_requests">[docs]</a>    <span class="k">def</span> <span class="nf">_do_parallel_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_request</span><span class="p">,</span> <span class="n">data_items</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call given function with given data items in parallel, collect responses.</span>
 
 <span class="sd">        Args:</span>
@@ -265,7 +269,7 @@
             <span class="k">return</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="PyxisClient._handle_json_response"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient._handle_json_response">[docs]</a>    <span class="k">def</span> <span class="nf">_handle_json_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get JSON from given response or raise an informative exception.</span>
 
 <span class="sd">        Uses `requests.raise_for_status()` but tries to extract more details.</span>
@@ -296,7 +300,7 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 <div class="viewcode-block" id="PyxisClient.get_container_signatures"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.get_container_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">get_container_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest_digests</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">references</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get a list of signature metadata matching given fields.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of signature metadata matching given fields.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            manifest_digests (comma separated str)</span>
@@ -324,7 +328,7 @@
         <span class="k">return</span> <span class="n">resp</span></div>
 
 <div class="viewcode-block" id="PyxisClient._get_items_from_all_pages"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient._get_items_from_all_pages">[docs]</a>    <span class="k">def</span> <span class="nf">_get_items_from_all_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get response from all pages of pyxis.</span>
 
 <span class="sd">        Args:</span>
@@ -353,7 +357,7 @@
         <span class="k">return</span> <span class="n">all_resp</span></div>
 
 <div class="viewcode-block" id="PyxisClient.delete_container_signatures"><a class="viewcode-back" href="../../../pyxis_client.html#pubtools._pyxis.pyxis_client.PyxisClient.delete_container_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">delete_container_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signature_ids</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Delete signatures matching given fields.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete signatures matching given fields.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            signature_ids ([str])</span>
