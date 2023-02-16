@@ -139,7 +139,15 @@ def setup_pyxis_client(args, ccache_file):
             "files must be provided for Pyxis authentication."
         )
 
-    return PyxisClient(args.pyxis_server, auth=auth, verify=not args.pyxis_insecure)
+    if hasattr(args, "request_threads"):
+        return PyxisClient(
+            args.pyxis_server,
+            auth=auth,
+            verify=not args.pyxis_insecure,
+            threads=args.request_threads,
+        )
+    else:
+        return PyxisClient(args.pyxis_server, auth=auth, verify=not args.pyxis_insecure)
 
 
 def set_get_operator_indices_args():
