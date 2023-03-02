@@ -251,9 +251,12 @@ def test_delete_container_signatures_server_error(hostname):
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         with pytest.raises(requests.exceptions.HTTPError, match="500 Server Error.*"):
             my_client.delete_container_signatures(ids)
-        assert len(m.request_history) == 1
+        assert len(m.request_history) == 2
         assert m.request_history[0].url == urljoin(
             hostname, "/v1/signatures/id/g1g1g1g1"
+        )
+        assert m.request_history[1].url == urljoin(
+            hostname, "/v1/signatures/id/h2h2h2h2"
         )
 
 
