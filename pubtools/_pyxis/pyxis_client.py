@@ -202,8 +202,14 @@ class PyxisClient(object):
         except ValueError:  # Python 2.x compat
             data = {}
 
+        tolerate_codes = []
         # Uploaded data already exists in Pyxis
-        if response.status_code == 409:
+        if response.request.method == "POST":
+            tolerate_codes = [409]
+        # Data already removed from Pyxis
+        elif response.request.method == "DELETE":
+            tolerate_codes = [404]
+        if response.status_code in tolerate_codes:
             return data
 
         try:
@@ -284,9 +290,10 @@ class PyxisClient(object):
             signature_ids ([str])
                 Internal Pyxis signature IDs of signatures which should be removed.
         """
-        delete_endpoint = "signatures/id/{id}"
 
-        for signature_id in signature_ids:
+        def _send_delete_request(signature_id):
+            delete_endpoint = "signatures/id/{id}"
             resp = self.pyxis_session.delete(delete_endpoint.format(id=signature_id))
-            if resp.status_code != 404:
-                resp.raise_for_status()
+            return resp
+
+        return self._do_parallel_requests(_send_delete_request, signature_ids)

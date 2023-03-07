@@ -108,6 +108,12 @@ DELETE_SIGNATURES_ARGS[("--ids",)] = {
     "required": True,
     "type": str,
 }
+DELETE_SIGNATURES_ARGS[("--request-threads",)] = {
+    "help": "Maximum number of threads to use for parallel requests",
+    "required": False,
+    "default": DEFAULT_REQUEST_THREADS_LIMIT,
+    "type": int,
+}
 
 
 def setup_pyxis_client(args, ccache_file):
