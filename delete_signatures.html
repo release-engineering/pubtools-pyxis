@@ -107,6 +107,7 @@
                                         <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">ssl</span><span class="o">-</span><span class="n">crtfile</span> <span class="n">PYXIS_SSL_CRTFILE</span><span class="p">]</span>
                                         <span class="p">[</span><span class="o">--</span><span class="n">pyxis</span><span class="o">-</span><span class="n">ssl</span><span class="o">-</span><span class="n">keyfile</span> <span class="n">PYXIS_SSL_KEYFILE</span><span class="p">]</span>
                                         <span class="o">--</span><span class="n">ids</span> <span class="n">IDS</span>
+                                        <span class="p">[</span><span class="o">--</span><span class="n">request</span><span class="o">-</span><span class="n">threads</span> <span class="n">REQUEST_THREADS</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="named-arguments">
@@ -132,6 +133,10 @@
 </dd>
 <dt><kbd>--ids</kbd></dt>
 <dd><p>comma separated signature IDs to remove or json file when prefixed with &#64;</p>
+</dd>
+<dt><kbd>--request-threads</kbd></dt>
+<dd><p>Maximum number of threads to use for parallel requests</p>
+<p>Default: 16</p>
 </dd>
 </dl>
 </section>

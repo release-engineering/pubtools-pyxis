@@ -187,6 +187,12 @@
     <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">}</span>
+<span class="n">DELETE_SIGNATURES_ARGS</span><span class="p">[(</span><span class="s2">&quot;--request-threads&quot;</span><span class="p">,)]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="s2">&quot;Maximum number of threads to use for parallel requests&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">DEFAULT_REQUEST_THREADS_LIMIT</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="setup_pyxis_client"><a class="viewcode-back" href="../../../ops_helpers.html#pubtools._pyxis.pyxis_ops.setup_pyxis_client">[docs]</a><span class="k">def</span> <span class="nf">setup_pyxis_client</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">ccache_file</span><span class="p">):</span>
