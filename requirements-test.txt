@@ -3,3 +3,4 @@ requests-mock
 pytest
 pytest-pylint
 pytest-cov
+bandit==1.7.5
