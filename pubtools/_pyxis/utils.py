@@ -1,7 +1,8 @@
 import argparse
+from typing import Any
 
 
-def setup_arg_parser(args):
+def setup_arg_parser(args: dict[Any, Any]) -> argparse.ArgumentParser:
     """
     Set up ArgumentParser with the provided arguments.
 
@@ -12,7 +13,7 @@ def setup_arg_parser(args):
         (ArgumentParser) Configured instance of ArgumentParser.
     """
     parser = argparse.ArgumentParser()
-    arg_groups = {}
+    arg_groups: dict[Any, Any] = {}
     for aliases, arg_data in args.items():
         holder = parser
         if "group" in arg_data:

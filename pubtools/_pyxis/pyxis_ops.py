@@ -1,9 +1,11 @@
 import json
 import sys
 import tempfile
+from argparse import ArgumentParser, Namespace
+from typing import Any
 
 from .constants import DEFAULT_REQUEST_THREADS_LIMIT
-from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth
+from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth, PyxisAuth
 from .pyxis_client import PyxisClient
 from .utils import setup_arg_parser
 
@@ -116,7 +118,7 @@ DELETE_SIGNATURES_ARGS[("--request-threads",)] = {
 }
 
 
-def setup_pyxis_client(args, ccache_file):
+def setup_pyxis_client(args: Namespace, ccache_file: str) -> PyxisClient:
     """
     Set up a PyxisClient instance according to specified parameters.
 
@@ -131,11 +133,11 @@ def setup_pyxis_client(args, ccache_file):
     """
     # If both auths are specified, Kerberos is preferred
     if args.pyxis_krb_principal:
-        auth = PyxisKrbAuth(
+        auth: PyxisAuth = PyxisKrbAuth(
             args.pyxis_krb_principal,
             args.pyxis_server,
-            args.pyxis_krb_ktfile,
             ccache_file,
+            args.pyxis_krb_ktfile,
         )
     elif args.pyxis_ssl_crtfile and args.pyxis_ssl_keyfile:
         auth = PyxisSSLAuth(args.pyxis_ssl_crtfile, args.pyxis_ssl_keyfile)
@@ -156,12 +158,12 @@ def setup_pyxis_client(args, ccache_file):
         return PyxisClient(args.pyxis_server, auth=auth, verify=not args.pyxis_insecure)
 
 
-def set_get_operator_indices_args():
+def set_get_operator_indices_args() -> ArgumentParser:
     """Set up argparser without extra parameters, this method is used for auto doc generation."""
     return setup_arg_parser(GET_OPERATORS_INDICES_ARGS)
 
 
-def get_operator_indices_main(sysargs=None):
+def get_operator_indices_main(sysargs: list[str] | None = None) -> list[str] | Any:
     """
     Entrypoint for getting operator indices.
 
@@ -184,12 +186,12 @@ def get_operator_indices_main(sysargs=None):
         return resp
 
 
-def set_get_repo_metadata_args():
+def set_get_repo_metadata_args() -> ArgumentParser:
     """Set up argparser without extra parameters, this method is used for auto doc generation."""
     return setup_arg_parser(GET_REPO_METADATA_ARGS)
 
 
-def get_repo_metadata_main(sysargs=None):
+def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
     """
     Entrypoint for getting repository metadata.
 
@@ -221,12 +223,12 @@ def get_repo_metadata_main(sysargs=None):
         return res
 
 
-def set_upload_signatures_args():
+def set_upload_signatures_args() -> ArgumentParser:
     """Set up argparser without extra parameters, this method is used for auto doc generation."""
     return setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
 
 
-def upload_signatures_main(sysargs=None):
+def upload_signatures_main(sysargs: list[str] | None = None) -> list[Any]:
     """
     Entrypoint for uploading signatures from JSON or a file.
 
@@ -250,7 +252,7 @@ def upload_signatures_main(sysargs=None):
         return resp
 
 
-def deserialize_list_from_arg(value, csv_input=False):
+def deserialize_list_from_arg(value: str, csv_input: bool = False) -> list[Any] | Any:
     """
     Conditionally load contents of a file if specified in argument value.
 
@@ -275,17 +277,17 @@ def deserialize_list_from_arg(value, csv_input=False):
         return json.load(f)
 
 
-def serialize_to_csv_from_list(list_value):
+def serialize_to_csv_from_list(list_value: list[Any]) -> str:
     """Convert a list to comma separated string."""
     return ",".join(list_value)
 
 
-def set_get_signatures_args():
+def set_get_signatures_args() -> ArgumentParser:
     """Set up argparser without extra parameters, this method is used for auto doc generation."""
     return setup_arg_parser(GET_SIGNATURES_ARGS)
 
 
-def get_signatures_main(sysargs=None):
+def get_signatures_main(sysargs: list[str] | None = None) -> list[str]:
     """
     Entrypoint for getting container signature metadata.
 
@@ -320,12 +322,12 @@ def get_signatures_main(sysargs=None):
         return res
 
 
-def set_delete_signatures_args():
+def set_delete_signatures_args() -> ArgumentParser:
     """Set up argparser without extra parameters, this method is used for auto doc generation."""
     return setup_arg_parser(DELETE_SIGNATURES_ARGS)
 
 
-def delete_signatures_main(sysargs=None):
+def delete_signatures_main(sysargs: list[str] | None = None) -> None:
     """
     Entrypoint for removing existing signatures.
 

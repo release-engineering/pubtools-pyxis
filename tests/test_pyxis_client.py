@@ -215,12 +215,14 @@ def test_delete_container_signatures_success(hostname):
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 2
-        assert m.request_history[0].url == urljoin(
-            hostname, "/v1/signatures/id/g1g1g1g1"
+        observed_urls = sorted([h.url for h in m.request_history])
+        expected_urls = sorted(
+            [
+                urljoin(hostname, "/v1/signatures/id/g1g1g1g1"),
+                urljoin(hostname, "/v1/signatures/id/h2h2h2h2"),
+            ]
         )
-        assert m.request_history[1].url == urljoin(
-            hostname, "/v1/signatures/id/h2h2h2h2"
-        )
+        assert observed_urls == expected_urls
 
 
 def test_delete_container_signatures_tolerate_404(hostname):
@@ -233,12 +235,14 @@ def test_delete_container_signatures_tolerate_404(hostname):
         my_client = pyxis_client.PyxisClient(hostname, 5, None, 3, True)
         my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 2
-        assert m.request_history[0].url == urljoin(
-            hostname, "/v1/signatures/id/g1g1g1g1"
+        observed_urls = sorted([h.url for h in m.request_history])
+        expected_urls = sorted(
+            [
+                urljoin(hostname, "/v1/signatures/id/g1g1g1g1"),
+                urljoin(hostname, "/v1/signatures/id/h2h2h2h2"),
+            ]
         )
-        assert m.request_history[1].url == urljoin(
-            hostname, "/v1/signatures/id/h2h2h2h2"
-        )
+        assert observed_urls == expected_urls
 
 
 def test_delete_container_signatures_server_error(hostname):

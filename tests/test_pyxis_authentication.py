@@ -24,7 +24,7 @@ def test_krb_auth_init(hostname):
     service = hostname
     ktfile = "/root/file.keytab"
 
-    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, ktfile)
+    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, "/path", ktfile)
     assert krb_auth.krb_princ == krb_princ
     assert krb_auth.service == service
     assert krb_auth.ktfile == ktfile
@@ -39,7 +39,7 @@ def test_krb_auth_use_keytab(mock_popen, hostname):
 
     with tempfile.NamedTemporaryFile() as tmpfile:
         krb_auth = pyxis_authentication.PyxisKrbAuth(
-            krb_princ, service, ktfile, tmpfile.name
+            krb_princ, service, tmpfile.name, ktfile
         )
         mock_wait = mock.MagicMock()
         mock_wait.side_effect = [0, 0, 0]
@@ -99,7 +99,7 @@ def test_krb_auth_skip_init(mock_popen, hostname):
     krb_princ = "name@REDHAT.COM"
     service = hostname
 
-    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service)
+    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, "/path")
     mock_wait = mock.MagicMock()
     mock_wait.return_value = 0
     mock_popen.return_value.wait = mock_wait
@@ -118,7 +118,7 @@ def test_krb_apply_to_session(mock_krb_auth, hostname):
     service = hostname
     ktfile = "/root/file.keytab"
 
-    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, ktfile)
+    krb_auth = pyxis_authentication.PyxisKrbAuth(krb_princ, service, ktfile, "/path")
     my_pyxis_session = pyxis_session.PyxisSession(hostname)
     krb_auth.apply_to_session(my_pyxis_session)
     assert isinstance(my_pyxis_session.session.auth, mock.MagicMock)
