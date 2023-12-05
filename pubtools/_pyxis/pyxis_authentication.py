@@ -3,15 +3,17 @@ import subprocess
 
 from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 
+from .pyxis_session import PyxisSession
 
-class PyxisAuth(object):
+
+class PyxisAuth:
     """Base Auth class."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize."""
         raise NotImplementedError  # pragma: no cover"
 
-    def apply_to_session(self, pyxis_session):
+    def apply_to_session(self, pyxis_session: PyxisSession) -> None:
         """Set up initialization in the Pyxis session."""
         raise NotImplementedError  # pragma: no cover"
 
@@ -20,7 +22,7 @@ class PyxisSSLAuth(PyxisAuth):
     """SSL Auth provider to PyxisClient."""
 
     # pylint: disable=super-init-not-called
-    def __init__(self, crt_path, key_path):
+    def __init__(self, crt_path: str, key_path: str) -> None:
         """
         Initialize.
 
@@ -33,7 +35,7 @@ class PyxisSSLAuth(PyxisAuth):
         self.crt_path = crt_path
         self.key_path = key_path
 
-    def apply_to_session(self, pyxis_session):
+    def apply_to_session(self, pyxis_session: PyxisSession) -> None:
         """
         Set up PyxisSession with SSL auth.
 
@@ -47,7 +49,9 @@ class PyxisSSLAuth(PyxisAuth):
 class PyxisKrbAuth(PyxisAuth):
     """Kerberos authentication support for PyxisClient."""
 
-    def __init__(self, krb_princ, service, ktfile=None, ccache_file=None):
+    def __init__(
+        self, krb_princ: str, service: str, ccache_file: str, ktfile: str | None = None
+    ) -> None:
         """
         Initialize.
 
@@ -56,17 +60,17 @@ class PyxisKrbAuth(PyxisAuth):
                 Kerberos principal for obtaining ticket.
             service (str)
                 URL of the service to apply the authentication to.
-            ktfile (str)
-                Kerberos client keytab file.
             ccache_file (str)
                 Path to a file used for ccache. Only necessary if kinit will be used.
+            ktfile (str)
+                Kerberos client keytab file.
         """
         self.krb_princ = krb_princ
         self.service = service
         self.ktfile = ktfile
         self.ccache_file = ccache_file
 
-    def _krb_auth(self):
+    def _krb_auth(self) -> HTTPKerberosAuth:
         retcode = subprocess.Popen(
             ["klist", "-s"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         ).wait()
@@ -102,7 +106,7 @@ class PyxisKrbAuth(PyxisAuth):
             force_preemptive=True,
         )
 
-    def apply_to_session(self, pyxis_session):
+    def apply_to_session(self, pyxis_session: PyxisSession) -> None:
         """Set up PyxisSession with Kerberos auth.
 
         Args:

@@ -3,27 +3,29 @@ from concurrent.futures import as_completed
 from functools import partial
 import math
 import threading
+from typing import Callable, Any
 
 from more_executors import Executors
 from requests.exceptions import HTTPError
+from requests import Response
 
 from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_session import PyxisSession
+from .pyxis_authentication import PyxisAuth
 
 
-# pylint: disable=bad-option-value,useless-object-inheritance
-class PyxisClient(object):
+class PyxisClient:
     """Pyxis requests wrapper."""
 
     def __init__(
         self,
-        hostname,
-        retries=5,
-        auth=None,
-        backoff_factor=5,
-        verify=True,
-        threads=DEFAULT_REQUEST_THREADS_LIMIT,
-    ):
+        hostname: str,
+        retries: int = 5,
+        auth: PyxisAuth | None = None,
+        backoff_factor: int = 5,
+        verify: bool = True,
+        threads: int = DEFAULT_REQUEST_THREADS_LIMIT,
+    ) -> None:
         """
         Initialize.
 
@@ -53,7 +55,7 @@ class PyxisClient(object):
         self.threads_limit = threads
 
     @property
-    def pyxis_session(self):
+    def pyxis_session(self) -> PyxisSession | Any:
         """
         Return a thread-local session for Pyxis requests.
 
@@ -64,13 +66,15 @@ class PyxisClient(object):
             self.thread_local.pyxis_session = self._make_session()
         return self.thread_local.pyxis_session
 
-    def _make_session(self):
+    def _make_session(self) -> PyxisSession:
         session = self._session_factory()
         if self._auth:
             self._auth.apply_to_session(session)
         return session
 
-    def get_operator_indices(self, ocp_versions_range, organization=None):
+    def get_operator_indices(
+        self, ocp_versions_range: str, organization: str | None = None
+    ) -> list[str] | Any:
         """Get a list of index images satisfying versioning and organization conditions.
 
         Args:
@@ -91,8 +95,12 @@ class PyxisClient(object):
         return resp.json()["data"]
 
     def get_repository_metadata(
-        self, repo_name, custom_registry=None, only_internal=False, only_partner=False
-    ):
+        self,
+        repo_name: str,
+        custom_registry: str | None = None,
+        only_internal: bool = False,
+        only_partner: bool = False,
+    ) -> dict[Any, Any] | Any:
         """Get metadata of a Comet repository.
 
         If checking only one registry hasn't been specified, check both with precedence on
@@ -130,19 +138,19 @@ class PyxisClient(object):
         resp.raise_for_status()
         return resp.json()
 
-    def upload_signatures(self, signatures):
+    def upload_signatures(self, signatures: list[str]) -> list[Any]:
         """
         Upload signatures from given JSON string.
 
         Args:
-            signatures (str)
+            signatures [str]
                 JSON with signatures to upload.  See Pyxis API for details.
 
         Returns:
             list: List of uploaded signatures including auto-populated fields.
         """
 
-        def _send_post_request(data):
+        def _send_post_request(data: dict[Any, Any]) -> Response:
             response = self.pyxis_session.post("signatures", json=data)
             # SEE CLOUDDST-9698
             # Pyxis returns 500 error due to a potential sidecar config issue
@@ -156,11 +164,13 @@ class PyxisClient(object):
 
         return self._do_parallel_requests(_send_post_request, signatures)
 
-    def _clear_session(self):
+    def _clear_session(self) -> None:
         self.thread_local.pyxis_session.close()
         delattr(self.thread_local, "pyxis_session")
 
-    def _do_parallel_requests(self, make_request, data_items):
+    def _do_parallel_requests(
+        self, make_request: Callable[[Any], Any], data_items: list[Any]
+    ) -> list[Any] | Any:
         """
         Call given function with given data items in parallel, collect responses.
 
@@ -189,7 +199,7 @@ class PyxisClient(object):
 
             return [f.result() for f in as_completed(futures)]
 
-    def _handle_json_response(self, response):
+    def _handle_json_response(self, response: Response) -> dict[Any, Any] | Any:
         """
         Get JSON from given response or raise an informative exception.
 
@@ -222,11 +232,13 @@ class PyxisClient(object):
             extra_msg = data["detail"] if "detail" in data else response.text
 
             # re-raise the exception with an extra message
-            raise HTTPError("{0}\n{1}".format(e, extra_msg))
+            raise HTTPError("{0}\n{1}".format(e, extra_msg), response=response)
 
         return data
 
-    def get_container_signatures(self, manifest_digests=None, references=None):
+    def get_container_signatures(
+        self, manifest_digests: str | None = None, references: str | None = None
+    ) -> list[str]:
         """Get a list of signature metadata matching given fields.
 
         Args:
@@ -254,7 +266,7 @@ class PyxisClient(object):
 
         return resp
 
-    def _get_items_from_all_pages(self, endpoint, **kwargs):
+    def _get_items_from_all_pages(self, endpoint: str, **kwargs: Any) -> list[Any]:
         """
         Get response from all pages of pyxis.
 
@@ -283,7 +295,7 @@ class PyxisClient(object):
                 all_resp.extend(resp.json()["data"])
         return all_resp
 
-    def delete_container_signatures(self, signature_ids):
+    def delete_container_signatures(self, signature_ids: list[str]) -> list[Any]:
         """Delete signatures matching given fields.
 
         Args:
@@ -291,7 +303,7 @@ class PyxisClient(object):
                 Internal Pyxis signature IDs of signatures which should be removed.
         """
 
-        def _send_delete_request(signature_id):
+        def _send_delete_request(signature_id: str) -> Response:
             delete_endpoint = "signatures/id/{id}"
             resp = self.pyxis_session.delete(delete_endpoint.format(id=signature_id))
             return resp

@@ -1,13 +1,20 @@
+from typing import Any
+
 import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 
 
-# pylint: disable=bad-option-value,useless-object-inheritance
-class PyxisSession(object):
+class PyxisSession:
     """Helper class to support Pyxis requests and authentication."""
 
-    def __init__(self, hostname, retries=5, backoff_factor=5, verify=False):
+    def __init__(
+        self,
+        hostname: str,
+        retries: int = 5,
+        backoff_factor: int = 5,
+        verify: bool = False,
+    ) -> None:
         """
         Initialize.
 
@@ -47,7 +54,7 @@ class PyxisSession(object):
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
 
-    def get(self, endpoint, **kwargs):
+    def get(self, endpoint: str, **kwargs: Any) -> requests.Response:
         """
         HTTP GET request against Pyxis server API.
 
@@ -59,7 +66,7 @@ class PyxisSession(object):
         """
         return self.session.get(self._api_url(endpoint), **kwargs)
 
-    def post(self, endpoint, **kwargs):
+    def post(self, endpoint: str, **kwargs: Any) -> requests.Response:
         """
         HTTP POST request against Pyxis server API.
 
@@ -71,7 +78,7 @@ class PyxisSession(object):
         """
         return self.session.post(self._api_url(endpoint), **kwargs)
 
-    def put(self, endpoint, **kwargs):
+    def put(self, endpoint: str, **kwargs: Any) -> requests.Response:
         """
         HTTP PUT request against Pyxis server API.
 
@@ -83,7 +90,7 @@ class PyxisSession(object):
         """
         return self.session.put(self._api_url(endpoint), **kwargs)
 
-    def delete(self, endpoint, **kwargs):
+    def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
         """
         HTTP DELETE request against Pyxis server API.
 
@@ -95,7 +102,7 @@ class PyxisSession(object):
         """
         return self.session.delete(self._api_url(endpoint), **kwargs)
 
-    def _api_url(self, endpoint):
+    def _api_url(self, endpoint: str) -> str:
         """
         Generate full url of the API endpoint.
 
@@ -110,6 +117,6 @@ class PyxisSession(object):
         else:
             return "%s/v1/%s" % (self.hostname.rstrip("/"), endpoint)
 
-    def close(self):
+    def close(self) -> None:
         """Close the current session."""
         self.session.close()
