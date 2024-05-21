@@ -7,7 +7,7 @@ import sys
 
 # import pkg_resources
 import sys
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 from setuptools.command.test import test as TestCommand
 
 
@@ -80,7 +80,8 @@ setup(
     url="https://github.com/release-engineering/pubtools-pyxis",
     classifiers=classifiers,
     python_requires='>=3.6',
-    packages=find_packages(exclude=["tests"]),
+    packages=find_namespace_packages(where="src"),
+    package_dir={"": "src"},
     data_files=[],
     install_requires=get_requirements(),
     dependency_links=DEPENDENCY_LINKS,
