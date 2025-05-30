@@ -163,7 +163,7 @@ def set_get_operator_indices_args() -> ArgumentParser:
     return setup_arg_parser(GET_OPERATORS_INDICES_ARGS)
 
 
-def get_operator_indices_main(sysargs: list[str] | None = None) -> list[str] | Any:
+def _get_operator_indices(sysargs: list[str] | None = None) -> list[str] | Any:
     """
     Entrypoint for getting operator indices.
 
@@ -181,9 +181,33 @@ def get_operator_indices_main(sysargs: list[str] | None = None) -> list[str] | A
         resp = pyxis_client.get_operator_indices(
             args.ocp_versions_range, args.organization
         )
-
-        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return resp
+
+
+def get_operator_indices_main(sysargs: list[str] | None = None) -> int:
+    """
+    Entrypoint for getting operator indices.
+
+    Returns:
+        int: Exit code (0 for success).
+    """
+    try:
+        resp = _get_operator_indices(sysargs)
+        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return 0
+    except Exception as e:
+        print(f"Error getting operator indices: {e}", file=sys.stderr)
+        return 1
+
+
+def get_operator_indices_mod(sysargs: list[str] | None = None) -> list[str] | Any:
+    """
+    Entrypoint for getting operator indices in module mode.
+
+    This function is used when running the script as a module.
+    It does not return an exit code, but rather prints the result directly.
+    """
+    return _get_operator_indices(sysargs)
 
 
 def set_get_repo_metadata_args() -> ArgumentParser:
@@ -191,7 +215,7 @@ def set_get_repo_metadata_args() -> ArgumentParser:
     return setup_arg_parser(GET_REPO_METADATA_ARGS)
 
 
-def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+def _get_repo_metadata(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
     """
     Entrypoint for getting repository metadata.
 
@@ -218,9 +242,34 @@ def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] |
             args.only_internal_registry,
             args.only_partner_registry,
         )
-
-        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res
+
+
+def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+    """
+    Entrypoint for getting repository metadata.
+
+    Returns:
+        int: Exit code (0 for success).
+    """
+    try:
+        res = _get_repo_metadata(sysargs)
+        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return 0
+    except Exception as e:
+        print(f"Error getting repository metadata: {e}", file=sys.stderr)
+        return 1
+
+
+def get_repo_metadata_mod(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+    """
+    Entrypoint for getting repository metadata in module mode.
+
+    This function is used when running the script as a module.
+    It does not return an exit code, but rather prints the result directly.
+    """
+    return _get_repo_metadata(sysargs)
+    # No return value, output is printed directly
 
 
 def set_upload_signatures_args() -> ArgumentParser:
@@ -228,7 +277,7 @@ def set_upload_signatures_args() -> ArgumentParser:
     return setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
 
 
-def upload_signatures_main(sysargs: list[str] | None = None) -> list[Any]:
+def _upload_signatures(sysargs: list[str] | None = None) -> list[Any]:
     """
     Entrypoint for uploading signatures from JSON or a file.
 
@@ -246,10 +295,34 @@ def upload_signatures_main(sysargs: list[str] | None = None) -> list[Any]:
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
         resp = pyxis_client.upload_signatures(signatures_json)
-
-        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
-
         return resp
+
+
+def upload_signatures_main(sysargs: list[str] | None = None) -> int:
+    """
+    Entrypoint for uploading signatures from JSON or a file.
+
+    Returns:
+        int: Exit code (0 for success).
+    """
+    try:
+        resp = _upload_signatures(sysargs)
+        json.dump(resp, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return 0
+    except Exception as e:
+        print(f"Error uploading signatures: {e}", file=sys.stderr)
+        return 1
+
+
+def upload_signatures_mod(sysargs: list[str] | None = None) -> list[Any]:
+    """
+    Entrypoint for uploading signatures from JSON or a file in module mode.
+
+    This function is used when running the script as a module.
+    It does not return an exit code, but rather prints the result directly.
+    """
+    return _upload_signatures(sysargs)
+    # No return value, output is printed directly
 
 
 def deserialize_list_from_arg(value: str, csv_input: bool = False) -> list[Any] | Any:
@@ -287,7 +360,7 @@ def set_get_signatures_args() -> ArgumentParser:
     return setup_arg_parser(GET_SIGNATURES_ARGS)
 
 
-def get_signatures_main(sysargs: list[str] | None = None) -> list[str]:
+def _get_signatures(sysargs: list[str] | None = None) -> list[str]:
     """
     Entrypoint for getting container signature metadata.
 
@@ -317,9 +390,34 @@ def get_signatures_main(sysargs: list[str] | None = None) -> list[str]:
         res = pyxis_client.get_container_signatures(
             csv_manifest_digests, csv_references
         )
-
-        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
         return res
+
+
+def get_signatures_main(sysargs: list[str] | None = None) -> int:
+    """
+    Entrypoint for getting container signature metadata.
+
+    Returns:
+        int: Exit code (0 for success).
+    """
+    try:
+        res = _get_signatures(sysargs)
+        json.dump(res, sys.stdout, sort_keys=True, indent=4, separators=(",", ": "))
+        return 0
+    except Exception as e:
+        print(f"Error getting signatures: {e}", file=sys.stderr)
+        return 1
+
+
+def get_signatures_mod(sysargs: list[str] | None = None) -> list[str]:
+    """
+    Entrypoint for getting container signature metadata in module mode.
+
+    This function is used when running the script as a module.
+    It does not return an exit code, but rather prints the result directly.
+    """
+    return _get_signatures(sysargs)
+    # No return value, output is printed directly
 
 
 def set_delete_signatures_args() -> ArgumentParser:
@@ -327,7 +425,7 @@ def set_delete_signatures_args() -> ArgumentParser:
     return setup_arg_parser(DELETE_SIGNATURES_ARGS)
 
 
-def delete_signatures_main(sysargs: list[str] | None = None) -> None:
+def _delete_signatures(sysargs: list[str] | None = None) -> None:
     """
     Entrypoint for removing existing signatures.
 
@@ -346,3 +444,29 @@ def delete_signatures_main(sysargs: list[str] | None = None) -> None:
     with tempfile.NamedTemporaryFile() as tmpfile:
         pyxis_client = setup_pyxis_client(args, tmpfile.name)
         pyxis_client.delete_container_signatures(signature_ids)
+
+
+def delete_signatures_main(sysargs: list[str] | None = None) -> int:
+    """
+    Entrypoint for removing existing signatures.
+
+    Returns:
+        int: Exit code (0 for success).
+    """
+    try:
+        _delete_signatures(sysargs)
+        return 0
+    except Exception as e:
+        print(f"Error deleting signatures: {e}", file=sys.stderr)
+        return 1
+
+
+def delete_signatures_mod(sysargs: list[str] | None = None) -> None:
+    """
+    Entrypoint for removing existing signatures in module mode.
+
+    This function is used when running the script as a module.
+    It does not return an exit code, but rather prints the result directly.
+    """
+    return _delete_signatures(sysargs)
+    # No return value, output is printed directly
