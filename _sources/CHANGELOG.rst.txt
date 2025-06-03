@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+1.3.6 (2025-03-06)
+------------------
+
+* Splitted entrypoitnts to `console_scripts` and `mod`.
+
+
 1.3.5 (2023-03-14)
 ------------------
 
