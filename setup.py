@@ -92,6 +92,13 @@ setup(
             "pubtools-pyxis-upload-signatures = pubtools._pyxis.pyxis_ops:upload_signatures_main",
             "pubtools-pyxis-get-signatures = pubtools._pyxis.pyxis_ops:get_signatures_main",
             "pubtools-pyxis-delete-signatures = pubtools._pyxis.pyxis_ops:delete_signatures_main"
+        ],
+        "mod": [
+            "pubtools-pyxis-get-operator-indices = pubtools._pyxis.pyxis_ops:get_operator_indices_mod",
+            "pubtools-pyxis-get-repo-metadata = pubtools._pyxis.pyxis_ops:get_repo_metadata_mod",
+            "pubtools-pyxis-upload-signatures = pubtools._pyxis.pyxis_ops:upload_signatures_mod",
+            "pubtools-pyxis-get-signatures = pubtools._pyxis.pyxis_ops:get_signatures_mod",
+            "pubtools-pyxis-delete-signatures = pubtools._pyxis.pyxis_ops:delete_signatures_mod"
         ]
     },
     include_package_data=True,

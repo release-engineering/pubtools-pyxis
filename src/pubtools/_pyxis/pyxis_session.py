@@ -40,7 +40,7 @@ class PyxisSession:
             connect=retries,
             backoff_factor=backoff_factor,
             status_forcelist=status_forcelist,
-            method_whitelist=[
+            allowed_methods=[
                 "HEAD",
                 "GET",
                 "PUT",

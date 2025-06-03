@@ -179,7 +179,7 @@ def test_arg_parser_no_verification(mock_kerberos, mock_ssl, mock_client, hostna
     ]
 
     with pytest.raises(ValueError, match="Either Kerberos principal.*"):
-        pyxis_ops.get_operator_indices_main(bad_args)
+        pyxis_ops.get_operator_indices_mod(bad_args)
 
     mock_kerberos.assert_not_called()
     mock_ssl.assert_not_called()
@@ -200,7 +200,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client, hos
     ]
 
     with pytest.raises(ValueError, match="Either Kerberos principal.*"):
-        pyxis_ops.get_operator_indices_main(bad_args)
+        pyxis_ops.get_operator_indices_mod(bad_args)
 
     bad_args2 = [
         "dummy",
@@ -213,7 +213,7 @@ def test_arg_parser_missing_ssl_option(mock_kerberos, mock_ssl, mock_client, hos
     ]
 
     with pytest.raises(ValueError, match="Either Kerberos principal.*"):
-        pyxis_ops.get_operator_indices_main(bad_args2)
+        pyxis_ops.get_operator_indices_mod(bad_args2)
 
     mock_kerberos.assert_not_called()
     mock_ssl.assert_not_called()
@@ -254,6 +254,41 @@ def test_get_operator_indices(capsys, hostname):
     assert out == expected
 
 
+def test_get_operator_indices_exception(capsys, hostname):
+    images = ["registry.io/index-image:4.5", "registry.io/index-image:4.6"]
+    data = [{"path": image, "something": "else"} for image in images]
+    ver = "4.5-4.6"
+    org = "redhat"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--ocp-versions-range",
+        ver,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--organization",
+        org,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/operators/indices?ocp_versions_range={1}&organization={2}".format(
+                hostname, ver, org
+            ),
+            json={"data": data},
+            status_code=500,
+        )
+        ret = pyxis_ops.get_operator_indices_main(args)
+
+    out, _ = capsys.readouterr()
+    assert out == ""
+    assert ret == 1
+
+
 def test_get_repository_metadata_no_restriction(capsys, hostname):
     data = {"metadata": "value", "metadata2": "value2"}
     repo_name = "some-repo/name"
@@ -286,6 +321,35 @@ def test_get_repository_metadata_no_restriction(capsys, hostname):
     assert out == expected
 
 
+def test_get_repository_metadata_main_exception(capsys, hostname):
+    repo_name = "some-repo/name"
+    registry = "registry.access.redhat.com"
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--repo-name",
+        repo_name,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/repositories/registry/{1}/repository/{2}".format(
+                hostname, registry, repo_name
+            ),
+            status_code=500,
+        )
+        ret = pyxis_ops.get_repo_metadata_main(args)
+        assert ret == 1
+    out, _ = capsys.readouterr()
+    assert out == ""
+
+
 def test_get_repository_metadata_both_restrictions_specified(capsys, hostname):
     repo_name = "some-repo/name"
 
@@ -304,7 +368,7 @@ def test_get_repository_metadata_both_restrictions_specified(capsys, hostname):
     ]
 
     with pytest.raises(ValueError, match="Can't check only internal registry.*"):
-        pyxis_ops.get_repo_metadata_main(args)
+        pyxis_ops.get_repo_metadata_mod(args)
 
 
 def test_get_repository_metadata_no_restriction_partner_registry(capsys, hostname):
@@ -470,11 +534,13 @@ def test_upload_signature_json(capsys, hostname):
         )
 
         retval = pyxis_ops.upload_signatures_main(args)
+        assert retval == 0
 
-        assert len(retval) == len(responses)
-        assert all(ret_item in responses for ret_item in retval)
+        # assert len(retval) == len(responses)
+        # assert all(ret_item in responses for ret_item in retval)
 
     out, _ = capsys.readouterr()
+    print("STDOUT", out)  # For debugging purposes, can be removed later.
     assert all(resp["signature_data"] in out for resp in responses)
 
 
@@ -503,9 +569,7 @@ def test_upload_signature_file(capsys):
         )
 
         retval = pyxis_ops.upload_signatures_main(args)
-
-        assert len(retval) == len(responses)
-        assert all(ret_item in responses for ret_item in retval)
+        assert retval == 0
 
     out, _ = capsys.readouterr()
     assert all(resp["signature_data"] in out for resp in responses)
@@ -533,11 +597,42 @@ def test_upload_signature_error_server(capsys):
         m.post("{0}v1/signatures".format(hostname), status_code=402)
 
         with pytest.raises(requests.exceptions.HTTPError):
-            pyxis_ops.upload_signatures_main(args)
+            pyxis_ops.upload_signatures_mod(args)
 
     out, err = capsys.readouterr()
     assert out == ""
     assert err == ""
+
+
+def test_upload_signature_main_error_server(capsys):
+    """Test a server-reported error which persists after a few attempts."""
+    hostname = "https://pyxis.remote.host/"
+
+    data = load_data("signatures")
+
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+        "--signatures",
+        data,
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.post("{0}v1/signatures".format(hostname), status_code=402)
+        ret = pyxis_ops.upload_signatures_main(args)
+
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert (
+        err == "Error uploading signatures: 402 Client Error: None for "
+        "url: https://pyxis.remote.host/v1/signatures\n\n"
+    )
+    assert ret == 1
 
 
 def test_upload_signature_error_timeout(capsys):
@@ -564,7 +659,7 @@ def test_upload_signature_error_timeout(capsys):
         )
 
         with pytest.raises(requests.exceptions.ConnectTimeout):
-            pyxis_ops.upload_signatures_main(args)
+            pyxis_ops.upload_signatures_mod(args)
 
     out, err = capsys.readouterr()
     assert out == ""
@@ -616,7 +711,7 @@ def test_upload_signatures_server_error_json_detail(capsys):
 
         err_msg = "400 Client Error: Crunchy frog for url: .+\nExtremely nasty"
         with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
-            pyxis_ops.upload_signatures_main(args)
+            pyxis_ops.upload_signatures_mod(args)
 
     out, err = capsys.readouterr()
     assert out == ""
@@ -656,7 +751,7 @@ def test_upload_signatures_server_error_content(capsys):
 
         err_msg = "400 Client Error: Crunchy frog for url: .+\nExtra non-JSON info"
         with pytest.raises(requests.exceptions.HTTPError, match=err_msg):
-            pyxis_ops.upload_signatures_main(args)
+            pyxis_ops.upload_signatures_mod(args)
 
     out, err = capsys.readouterr()
     assert out == ""
@@ -696,6 +791,69 @@ def test_get_signatures(capsys, hostname):
         pyxis_ops.get_signatures_main(args)
     out, _ = capsys.readouterr()
     assert out == expected
+
+
+def test_get_signatures_mod(capsys, hostname):
+    all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
+    manifest_digest = "sha256:dummy-manifest-digest-1"
+    reference = "registry.access.redhat.com/e2e-container/rhel-8-e2e-container-test-product:latest"
+    signatures_matching["data"] = all_signatures["data"][0:3]
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--manifest-digest",
+        manifest_digest,
+        "--reference",
+        reference,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    expected = signatures_matching["data"]
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/signatures?filter=manifest_digest=in=({1}),reference=in=({2})".format(
+                hostname, manifest_digest, reference
+            ),
+            json=signatures_matching,
+        )
+        ret = pyxis_ops.get_signatures_mod(args)
+    assert ret == expected
+
+
+def test_get_signatures_main_error(capsys, hostname):
+    all_signatures = signatures_matching = json.loads(load_data("sigs_with_reference"))
+    manifest_digest = "sha256:dummy-manifest-digest-1"
+    reference = "registry.access.redhat.com/e2e-container/rhel-8-e2e-container-test-product:latest"
+    signatures_matching["data"] = all_signatures["data"][0:3]
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--manifest-digest",
+        manifest_digest,
+        "--reference",
+        reference,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(
+            "{0}v1/signatures?filter=manifest_digest=in=({1}),reference=in=({2})".format(
+                hostname, manifest_digest, reference
+            ),
+            json=signatures_matching,
+            status_code=500,
+        )
+        pyxis_ops.get_signatures_main(args)
+    out, _ = capsys.readouterr()
+    assert out == ""
 
 
 def test_get_signatures_error(capsys, hostname):
@@ -752,7 +910,7 @@ def test_get_signatures_manifests_file(capsys):
     assert out == expected
 
 
-def test_delete_signatures(hostname):
+def test_delete_signatures_main(hostname):
     ids = "g2g2g2g2,h3h3h3h3"
     args = [
         "dummy",
@@ -773,12 +931,67 @@ def test_delete_signatures(hostname):
         pyxis_ops.delete_signatures_main(args)
 
         assert len(m.request_history) == 2
-        assert m.request_history[0].url == "{0}v1/signatures/id/{1}".format(
-            hostname, "g2g2g2g2"
+
+        assert set([h.url for h in m.request_history]) == set(
+            [
+                "{0}v1/signatures/id/{1}".format(hostname, "g2g2g2g2"),
+                "{0}v1/signatures/id/{1}".format(hostname, "h3h3h3h3"),
+            ]
         )
-        assert m.request_history[1].url == "{0}v1/signatures/id/{1}".format(
-            hostname, "h3h3h3h3"
+
+
+def test_delete_signatures_mod(hostname):
+    ids = "g2g2g2g2,h3h3h3h3"
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--ids",
+        ids,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.delete("{0}v1/signatures/id/{1}".format(hostname, "g2g2g2g2"))
+        m.delete("{0}v1/signatures/id/{1}".format(hostname, "h3h3h3h3"))
+
+        pyxis_ops.delete_signatures_mod(args)
+
+        assert len(m.request_history) == 2
+
+        assert set([h.url for h in m.request_history]) == set(
+            [
+                "{0}v1/signatures/id/{1}".format(hostname, "g2g2g2g2"),
+                "{0}v1/signatures/id/{1}".format(hostname, "h3h3h3h3"),
+            ]
         )
+
+
+def test_delete_signatures_main_error(hostname):
+    ids = "g2g2g2g2,h3h3h3h3"
+    args = [
+        "dummy",
+        "--pyxis-server",
+        hostname,
+        "--ids",
+        ids,
+        "--pyxis-ssl-crtfile",
+        "/root/name.crt",
+        "--pyxis-ssl-keyfile",
+        "/root/name.key",
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.delete("{0}v1/signatures/id/{1}".format(hostname, "g2g2g2g2"))
+        m.delete(
+            "{0}v1/signatures/id/{1}".format(hostname, "h3h3h3h3"), status_code=500
+        )
+
+        ret = pyxis_ops.delete_signatures_main(args)
+        assert ret == 1
 
 
 def test_delete_signatures_error(capsys, hostname):

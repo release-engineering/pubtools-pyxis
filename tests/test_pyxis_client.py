@@ -256,11 +256,11 @@ def test_delete_container_signatures_server_error(hostname):
         with pytest.raises(requests.exceptions.HTTPError, match="500 Server Error.*"):
             my_client.delete_container_signatures(ids)
         assert len(m.request_history) == 2
-        assert m.request_history[0].url == urljoin(
-            hostname, "/v1/signatures/id/g1g1g1g1"
-        )
-        assert m.request_history[1].url == urljoin(
-            hostname, "/v1/signatures/id/h2h2h2h2"
+        assert set([h.url for h in m.request_history]) == set(
+            [
+                urljoin(hostname, "/v1/signatures/id/g1g1g1g1"),
+                urljoin(hostname, "/v1/signatures/id/h2h2h2h2"),
+            ]
         )
 
 
