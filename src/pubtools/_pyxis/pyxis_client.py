@@ -3,7 +3,7 @@ from concurrent.futures import as_completed
 from functools import partial
 import math
 import threading
-from typing import Callable, Any
+from typing import Callable, Any, Optional, Union
 
 from more_executors import Executors
 from requests.exceptions import HTTPError
@@ -21,7 +21,7 @@ class PyxisClient:
         self,
         hostname: str,
         retries: int = 5,
-        auth: PyxisAuth | None = None,
+        auth: Optional[PyxisAuth] = None,
         backoff_factor: int = 5,
         verify: bool = True,
         threads: int = DEFAULT_REQUEST_THREADS_LIMIT,
@@ -55,7 +55,7 @@ class PyxisClient:
         self.threads_limit = threads
 
     @property
-    def pyxis_session(self) -> PyxisSession | Any:
+    def pyxis_session(self) -> Union[PyxisSession, Any]:
         """
         Return a thread-local session for Pyxis requests.
 
@@ -73,8 +73,8 @@ class PyxisClient:
         return session
 
     def get_operator_indices(
-        self, ocp_versions_range: str, organization: str | None = None
-    ) -> list[str] | Any:
+        self, ocp_versions_range: str, organization: Optional[str] = None
+    ) -> Union[list[str], Any]:
         """Get a list of index images satisfying versioning and organization conditions.
 
         Args:
@@ -97,10 +97,10 @@ class PyxisClient:
     def get_repository_metadata(
         self,
         repo_name: str,
-        custom_registry: str | None = None,
+        custom_registry: Optional[str] = None,
         only_internal: bool = False,
         only_partner: bool = False,
-    ) -> dict[Any, Any] | Any:
+    ) -> Union[dict[Any, Any], Any]:
         """Get metadata of a Comet repository.
 
         If checking only one registry hasn't been specified, check both with precedence on
@@ -170,7 +170,7 @@ class PyxisClient:
 
     def _do_parallel_requests(
         self, make_request: Callable[[Any], Any], data_items: list[Any]
-    ) -> list[Any] | Any:
+    ) -> Union[list[Any], Any]:
         """
         Call given function with given data items in parallel, collect responses.
 
@@ -199,7 +199,7 @@ class PyxisClient:
 
             return [f.result() for f in as_completed(futures)]
 
-    def _handle_json_response(self, response: Response) -> dict[Any, Any] | Any:
+    def _handle_json_response(self, response: Response) -> Union[dict[Any, Any], Any]:
         """
         Get JSON from given response or raise an informative exception.
 
@@ -237,7 +237,7 @@ class PyxisClient:
         return data
 
     def get_container_signatures(
-        self, manifest_digests: str | None = None, references: str | None = None
+        self, manifest_digests: Optional[str] = None, references: Optional[str] = None
     ) -> list[str]:
         """Get a list of signature metadata matching given fields.
 

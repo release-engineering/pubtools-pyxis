@@ -1,5 +1,6 @@
 import os
 import subprocess
+from typing import Optional
 
 from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 
@@ -50,7 +51,11 @@ class PyxisKrbAuth(PyxisAuth):
     """Kerberos authentication support for PyxisClient."""
 
     def __init__(
-        self, krb_princ: str, service: str, ccache_file: str, ktfile: str | None = None
+        self,
+        krb_princ: str,
+        service: str,
+        ccache_file: str,
+        ktfile: Optional[str] = None,
     ) -> None:
         """
         Initialize.

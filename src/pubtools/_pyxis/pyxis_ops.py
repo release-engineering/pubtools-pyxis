@@ -2,7 +2,7 @@ import json
 import sys
 import tempfile
 from argparse import ArgumentParser, Namespace
-from typing import Any
+from typing import Any, Optional, Union
 
 from .constants import DEFAULT_REQUEST_THREADS_LIMIT
 from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth, PyxisAuth
@@ -163,7 +163,7 @@ def set_get_operator_indices_args() -> ArgumentParser:
     return setup_arg_parser(GET_OPERATORS_INDICES_ARGS)
 
 
-def _get_operator_indices(sysargs: list[str] | None = None) -> list[str] | Any:
+def _get_operator_indices(sysargs: Optional[list[str]] = None) -> Union[list[str], Any]:
     """
     Entrypoint for getting operator indices.
 
@@ -184,7 +184,7 @@ def _get_operator_indices(sysargs: list[str] | None = None) -> list[str] | Any:
         return resp
 
 
-def get_operator_indices_main(sysargs: list[str] | None = None) -> int:
+def get_operator_indices_main(sysargs: Optional[list[str]] = None) -> int:
     """
     Entrypoint for getting operator indices.
 
@@ -200,7 +200,9 @@ def get_operator_indices_main(sysargs: list[str] | None = None) -> int:
         return 1
 
 
-def get_operator_indices_mod(sysargs: list[str] | None = None) -> list[str] | Any:
+def get_operator_indices_mod(
+    sysargs: Optional[list[str]] = None,
+) -> Union[list[str], Any]:
     """
     Entrypoint for getting operator indices in module mode.
 
@@ -215,7 +217,9 @@ def set_get_repo_metadata_args() -> ArgumentParser:
     return setup_arg_parser(GET_REPO_METADATA_ARGS)
 
 
-def _get_repo_metadata(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+def _get_repo_metadata(
+    sysargs: Optional[list[str]] = None,
+) -> Union[dict[Any, Any], Any]:
     """
     Entrypoint for getting repository metadata.
 
@@ -245,7 +249,9 @@ def _get_repo_metadata(sysargs: list[str] | None = None) -> dict[Any, Any] | Any
         return res
 
 
-def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+def get_repo_metadata_main(
+    sysargs: Optional[list[str]] = None,
+) -> Union[dict[Any, Any], Any]:
     """
     Entrypoint for getting repository metadata.
 
@@ -261,7 +267,9 @@ def get_repo_metadata_main(sysargs: list[str] | None = None) -> dict[Any, Any] |
         return 1
 
 
-def get_repo_metadata_mod(sysargs: list[str] | None = None) -> dict[Any, Any] | Any:
+def get_repo_metadata_mod(
+    sysargs: Optional[list[str]] = None,
+) -> Union[dict[Any, Any], Any]:
     """
     Entrypoint for getting repository metadata in module mode.
 
@@ -277,7 +285,7 @@ def set_upload_signatures_args() -> ArgumentParser:
     return setup_arg_parser(UPLOAD_SIGNATURES_ARGS)
 
 
-def _upload_signatures(sysargs: list[str] | None = None) -> list[Any]:
+def _upload_signatures(sysargs: Optional[list[str]] = None) -> list[Any]:
     """
     Entrypoint for uploading signatures from JSON or a file.
 
@@ -298,7 +306,7 @@ def _upload_signatures(sysargs: list[str] | None = None) -> list[Any]:
         return resp
 
 
-def upload_signatures_main(sysargs: list[str] | None = None) -> int:
+def upload_signatures_main(sysargs: Optional[list[str]] = None) -> int:
     """
     Entrypoint for uploading signatures from JSON or a file.
 
@@ -314,7 +322,7 @@ def upload_signatures_main(sysargs: list[str] | None = None) -> int:
         return 1
 
 
-def upload_signatures_mod(sysargs: list[str] | None = None) -> list[Any]:
+def upload_signatures_mod(sysargs: Optional[list[str]] = None) -> list[Any]:
     """
     Entrypoint for uploading signatures from JSON or a file in module mode.
 
@@ -325,7 +333,9 @@ def upload_signatures_mod(sysargs: list[str] | None = None) -> list[Any]:
     # No return value, output is printed directly
 
 
-def deserialize_list_from_arg(value: str, csv_input: bool = False) -> list[Any] | Any:
+def deserialize_list_from_arg(
+    value: str, csv_input: bool = False
+) -> Union[list[Any], Any]:
     """
     Conditionally load contents of a file if specified in argument value.
 
@@ -360,7 +370,7 @@ def set_get_signatures_args() -> ArgumentParser:
     return setup_arg_parser(GET_SIGNATURES_ARGS)
 
 
-def _get_signatures(sysargs: list[str] | None = None) -> list[str]:
+def _get_signatures(sysargs: Optional[list[str]] = None) -> list[str]:
     """
     Entrypoint for getting container signature metadata.
 
@@ -393,7 +403,7 @@ def _get_signatures(sysargs: list[str] | None = None) -> list[str]:
         return res
 
 
-def get_signatures_main(sysargs: list[str] | None = None) -> int:
+def get_signatures_main(sysargs: Optional[list[str]] = None) -> int:
     """
     Entrypoint for getting container signature metadata.
 
@@ -409,7 +419,7 @@ def get_signatures_main(sysargs: list[str] | None = None) -> int:
         return 1
 
 
-def get_signatures_mod(sysargs: list[str] | None = None) -> list[str]:
+def get_signatures_mod(sysargs: Optional[list[str]] = None) -> list[str]:
     """
     Entrypoint for getting container signature metadata in module mode.
 
@@ -425,7 +435,7 @@ def set_delete_signatures_args() -> ArgumentParser:
     return setup_arg_parser(DELETE_SIGNATURES_ARGS)
 
 
-def _delete_signatures(sysargs: list[str] | None = None) -> None:
+def _delete_signatures(sysargs: Optional[list[str]] = None) -> None:
     """
     Entrypoint for removing existing signatures.
 
@@ -446,7 +456,7 @@ def _delete_signatures(sysargs: list[str] | None = None) -> None:
         pyxis_client.delete_container_signatures(signature_ids)
 
 
-def delete_signatures_main(sysargs: list[str] | None = None) -> int:
+def delete_signatures_main(sysargs: Optional[list[str]] = None) -> int:
     """
     Entrypoint for removing existing signatures.
 
@@ -461,7 +471,7 @@ def delete_signatures_main(sysargs: list[str] | None = None) -> int:
         return 1
 
 
-def delete_signatures_mod(sysargs: list[str] | None = None) -> None:
+def delete_signatures_mod(sysargs: Optional[list[str]] = None) -> None:
     """
     Entrypoint for removing existing signatures in module mode.
 
