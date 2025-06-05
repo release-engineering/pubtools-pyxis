@@ -71,7 +71,7 @@ if os.environ.get("READTHEDOCS", None):
 
 setup(
     name="pubtools-pyxis",
-    version="1.3.6",
+    version="1.3.7",
     description="Pubtools-pyxis",
     long_description=long_description,
     long_description_content_type='text/x-rst',
