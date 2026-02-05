@@ -9,7 +9,6 @@ from .pyxis_authentication import PyxisKrbAuth, PyxisSSLAuth, PyxisAuth
 from .pyxis_client import PyxisClient
 from .utils import setup_arg_parser
 
-
 CMD_ARGS = {
     ("--pyxis-server",): {
         "help": "Pyxis service hostname",
