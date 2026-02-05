@@ -3,7 +3,7 @@ name: Tox tests
 on: [push, pull_request]
 
 jobs:
-  py310:
+  py311:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,11 +14,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
-        run: tox -e py310 -vv
+        run: tox -e py311 -vv
   black:
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
@@ -46,7 +46,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
@@ -78,7 +78,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
@@ -94,11 +94,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
-        run: tox -e py310
+        run: tox -e py311
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         env:
@@ -117,7 +117,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Install Tox
         run: pip install tox
       - name: Run Tox
