@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+1.3.8 (2026-02-05)
+------------------
+
+* Unpin unsafe urllib3 version
+* Add Python 3.11 and 3.14 to CI
+
 1.3.7 (2025-05-06)
 ------------------
 
